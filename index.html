@@ -179,18 +179,19 @@ function adaptV(d3,pvt,g2to,d3to,extraInit={}){
     {l:'Finition',t:'Tir de l’ARG, ou passe au PVT si le défenseur ferme.',a:[S('ARG',.1,.45,-0.6)]}
   ]};
 }
+const MEP_BBQ='PVT entre le 2 et le 3, côté de l’ailier qui a le ballon ; quand l’ailier reçoit, il glisse entre le 2 et le 1 (exemple côté gauche).';
 const ADAPT_TXT='Si le n°1 interdit la passe à l’ALG : l’ARG part en dribble dans l’espace du PVT, qui glisse entre le 1 et le 2.';
 const MEP_23='PVT entre le 1 et le 2, côté de l’ailier qui a le ballon ; il glisse ensuite entre le 2 et le 3 (exemple côté gauche).';
 
 const SECTIONS=[['06','Sur 0-6'],['15','Sur 1-5'],['sup','Supériorité +1'],['inf','Infériorité −1']];
 const PLAYS=[
 /* ===== 0-6 ===== */
-{id:'bbq-06',sec:'06',name:'BBQ',def:'d06',mep:MEP_23,obj:'Duel sur le 3 bas isolé. Tir du DC à 9 m.',adapt:ADAPT_TXT,
+{id:'bbq-06',sec:'06',name:'BBQ',def:'d06',mep:MEP_BBQ,obj:'Duel sur le 3 bas isolé. Tir du DC à 9 m.',adapt:ADAPT_TXT,
  variants:[
-  {n:'Principal',init:{PVT:[-6.1,4.4],ball:'ARG'},steps:[
-    algRecoit([R('ARG',-5.7,10.9,.6,.95)]),
-    {l:'Tps 2',t:'Le PVT glisse de 1-2 vers 2-3 et bloque le 2. L’ALG lance l’ARG au duel sur le 3 bas.',
-     a:[R('PVT',-3.4,6.05,0,.5,-5.0,6.9),M('g2',-4.9,5.2,.15,.55),R('ARG',-2.5,8.5,.15,.7,-4.6,9.6),P('ALG','ARG',.45,.75),M('g3',-2.2,7.4,.5,.9)]},
+  {n:'Principal',init:{PVT:[-3.1,6.1],ball:'ARG'},steps:[
+    {...algRecoit([R('PVT',-6.1,4.4,.35,.85,-5.2,6.9),M('g2',-5.1,5.2,.45,.9),R('ARG',-5.7,10.9,.6,.95)]),t:'L’ALG monte et reçoit la balle à l’intersection 9 m / ligne de touche ; à la réception, le PVT glisse entre le 2 et le 1.'},
+    {l:'Tps 2',t:'L’ALG lance l’ARG au duel sur le 3 bas, isolé.',
+     a:[R('ARG',-2.5,8.5,.15,.7,-4.6,9.6),P('ALG','ARG',.45,.75),M('g3',-2.2,7.4,.5,.9)]},
     {l:'Selon le DC adverse',t:'Double duel, ou l’ARG aplatit : il fixe et lance le DC qui tire à 9 m.',
      a:[D('ARG',-1.2,8.3,0,.4),M('d3',-0.4,7.4,.1,.5),R('DC',1.4,10.0,0,.45,0.8,11.2),P('ARG','DC',.42,.65),S('DC',.72,.95)]}
   ]},
@@ -238,14 +239,14 @@ const PLAYS=[
   adaptV('g3',[-3.1,6.1],[-4.4,5.9],[-2.4,7.1])
  ]},
 /* ===== 1-5 ===== */
-{id:'bbq-15',sec:'15',name:'BBQ',def:'d15',mep:MEP_23,obj:'Tir à 6 m central.',cles:'Action du 3 haut.',note:'Même continuité que sur 0-6.',adapt:ADAPT_TXT,
+{id:'bbq-15',sec:'15',name:'BBQ',def:'d15',mep:MEP_BBQ,obj:'Tir à 6 m central.',cles:'Action du 3 haut.',note:'Même continuité que sur 0-6.',adapt:ADAPT_TXT,
  variants:[
-  {n:'Principal',init:{PVT:[-5.9,4.5],DC:[0,12.2],ball:'ARG'},steps:[
-    algRecoit([M('h3',-1.2,9.8,.3,.85)]),
-    {l:'Tps 2',t:'Le PVT glisse entre le 2 et le 3. L’ALG lance l’ARG au duel sur le 3 bas.',
-     a:[R('PVT',-3.0,6.1,0,.5,-4.6,6.9),M('g2',-4.6,5.5,.15,.55),R('ARG',-2.1,8.5,.15,.7,-4.4,9.9),P('ALG','ARG',.45,.75),M('b3',-1.0,7.5,.5,.9),M('h3',-1.0,9.4,.55,.95)]},
-    {l:'Point clé : le 3 haut',t:'Si le 3 haut vient aider, le PVT glisse dans le dos du 3 bas : tir à 6 m central.',
-     a:[R('PVT',0.2,6.7,0,.5,-1.3,6.1),P('ARG','PVT',.45,.7),S('PVT',.75,.95,0.6)]}
+  {n:'Principal',init:{PVT:[-2.4,6.3],DC:[0,12.2],ball:'ARG'},steps:[
+    {...algRecoit([M('h3',-1.2,9.8,.3,.85),R('PVT',-5.9,4.5,.35,.85,-4.6,6.9),M('g2',-4.6,5.5,.45,.9)]),t:'L’ALG monte et reçoit la balle à l’intersection 9 m / ligne de touche ; à la réception, le PVT glisse entre le 2 et le 1.'},
+    {l:'Tps 2',t:'L’ALG lance l’ARG au duel sur le 3 bas, isolé.',
+     a:[R('ARG',-2.1,8.5,.15,.7,-4.4,9.9),P('ALG','ARG',.45,.75),M('b3',-1.0,7.5,.5,.9),M('h3',-1.0,9.4,.55,.95)]},
+    {l:'Point clé : le 3 haut',t:'Selon l’action du 3 haut : l’ARG gagne son duel sur le 3 bas isolé et tire à 6 m central.',
+     a:[D('ARG',-0.2,7.0,0,.5,-2.1,7.4),M('b3',-1.5,7.7,.1,.5),S('ARG',.6,.85,0.5)]}
   ]},
   {n:'Continuité',init:{PVT:[-5.9,4.5],DC:[0,12.2],ball:'DC'},steps:[
     {l:'L’ALD reçoit',t:'Le ballon part à droite : l’ALD monte et reçoit à l’intersection 9 m / touche.',
@@ -286,11 +287,11 @@ const PLAYS=[
     {l:'ARG fort interne',t:'L’ARG revient fort à l’intérieur, entre le 2 et le 3.',
      a:[D('ARG',-1.9,8.2,0,.6,-4.8,8.8),M('c3',-0.6,7.6,.3,.7),S('ARG',.72,.95,-1.1)]}
  ]}]},
-{id:'sup-bbq',sec:'sup',name:'BBQ',def:'d05',mep:'PVT entre le 1 et le 2 côté ailier, il glisse entre le 2 et le 3.',obj:'Sans duel : chacun son espace, le ballon circule jusqu’au joueur libre.',
- variants:[{n:'Principal',init:{PVT:[-5.6,4.8],ball:'ARG'},steps:[
-    algRecoit(),
-    {l:'Chacun son espace',t:'Le PVT glisse entre le 2 et le 3, chacun attaque son espace sans chercher le duel.',
-     a:[R('PVT',-2.1,6.35,0,.45,-4.0,6.9),M('g2',-4.3,5.6,.15,.5),R('ARG',-3.6,9.2,0,.45),P('ALG','ARG',.3,.55),R('DC',1.6,9.4,.2,.6),P('ARG','DC',.6,.8),M('c3',0.8,7.4,.6,.9)]},
+{id:'sup-bbq',sec:'sup',name:'BBQ',def:'d05',mep:'PVT entre le 2 et le 3 côté ailier ; quand l’ailier reçoit, il glisse entre le 2 et le 1.',obj:'Sans duel : chacun son espace, le ballon circule jusqu’au joueur libre.',
+ variants:[{n:'Principal',init:{PVT:[-2.0,6.4],ball:'ARG'},steps:[
+    {...algRecoit([R('PVT',-5.6,4.8,.35,.85,-4.0,6.9),M('g2',-4.3,5.6,.45,.9)]),t:'L’ALG monte et reçoit la balle ; à la réception, le PVT glisse entre le 2 et le 1.'},
+    {l:'Chacun son espace',t:'Chacun attaque son espace sans chercher le duel.',
+     a:[R('ARG',-3.6,9.2,0,.45),P('ALG','ARG',.3,.55),R('DC',1.6,9.4,.2,.6),P('ARG','DC',.6,.8),M('c3',0.8,7.4,.6,.9)]},
     {l:'Joueur libre',t:'Le ballon va vite jusqu’au joueur libre (ici l’ALD).',
      a:[R('ARD',4.8,9.2,0,.3),P('DC','ARD',.1,.35),M('d2',4.4,6.8,.25,.55),P('ARD','ALD',.45,.68),S('ALD',.74,.96,-1.0)]}
  ]}]},
