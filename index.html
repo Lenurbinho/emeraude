@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Enclenchements Émeraude 2 – 2026-2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --em:#0f9d6c; --em-d:#0a6e4c; --ink:#0e1412; --ink2:#3b4642; --mute:#6b7772;
+  --bg:#f3f5f4; --card:#fff; --line:#dfe5e2; --def:#d8433b; --ball:#ffc928;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px}
+header{background:var(--ink);color:#fff;padding:18px 20px 0}
+.hwrap{max-width:1180px;margin:0 auto}
+.kicker{font:700 13px/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:#4fd3a2}
+h1{font:800 34px/1.05 "Barlow Condensed",sans-serif;margin:6px 0 14px;letter-spacing:.01em}
+h1 span{color:#4fd3a2}
+.sections{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.sections button{flex:none;border:0;background:transparent;color:#b9c6c1;font:700 17px "Barlow Condensed";letter-spacing:.03em;padding:10px 14px 12px;border-radius:10px 10px 0 0;cursor:pointer}
+.sections button.on{background:var(--bg);color:var(--ink)}
+main{max-width:1180px;margin:0 auto;padding:14px 16px 40px}
+.plays{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.plays button{border:1.5px solid var(--line);background:#fff;color:var(--ink);font:600 14px Inter;padding:8px 14px;border-radius:999px;cursor:pointer}
+.plays button.on{background:var(--em);border-color:var(--em);color:#fff}
+.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.court-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 8px;flex-wrap:wrap}
+.court-title{font:800 26px/1 "Barlow Condensed"}
+.court-title small{font:600 14px Inter;color:var(--mute);margin-left:8px}
+.variants{display:flex;gap:6px;flex-wrap:wrap}
+.variants button{border:1.5px solid var(--line);background:#fff;font:600 12.5px Inter;padding:5px 10px;border-radius:8px;cursor:pointer;color:var(--ink2)}
+.variants button.on{border-color:var(--ink);background:var(--ink);color:#fff}
+svg#court{display:block;width:100%;height:auto;background:#e7eef3;touch-action:manipulation}
+.caption{padding:12px 14px;border-top:1px solid var(--line);min-height:76px;display:flex;gap:12px;align-items:flex-start}
+.cap-n{flex:none;background:var(--em);color:#fff;font:800 18px/1 "Barlow Condensed";border-radius:8px;padding:7px 9px;min-width:44px;text-align:center}
+.cap-l{font:700 15px Inter;margin-bottom:3px}
+.cap-t{color:var(--ink2);line-height:1.4}
+.timeline{display:flex;gap:4px;padding:0 14px 10px}
+.seg{flex:1;height:26px;border-radius:6px;background:#e9eeec;position:relative;overflow:hidden;cursor:pointer;border:0;padding:0}
+.seg i{position:absolute;inset:0 auto 0 0;background:#bfe6d6;width:0}
+.seg.cur i{background:var(--em)}
+.seg b{position:relative;font:700 11px/26px Inter;color:var(--ink2);white-space:nowrap;padding:0 6px;display:block;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.seg.cur b{color:#fff}
+.controls{display:flex;align-items:center;gap:8px;padding:10px 14px 14px;flex-wrap:wrap;border-top:1px solid var(--line)}
+.btn{border:0;background:#edf1ef;color:var(--ink);font:600 14px Inter;height:40px;min-width:40px;padding:0 12px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.play{background:var(--em);color:#fff;min-width:110px}
+.btn:hover{filter:brightness(.96)}
+.sp{flex:1}
+select.btn{appearance:none;padding:0 12px}
+label.tg{display:inline-flex;align-items:center;gap:6px;font:500 13px Inter;color:var(--ink2);cursor:pointer;user-select:none}
+label.tg input{accent-color:var(--em);width:16px;height:16px}
+.info{padding:16px}
+.info h3{font:800 20px "Barlow Condensed";margin:0 0 10px}
+.row{margin-bottom:12px}
+.row .k{font:700 11px Inter;letter-spacing:.1em;text-transform:uppercase;color:var(--em-d);margin-bottom:3px}
+.row .v{line-height:1.45;color:var(--ink2)}
+.steps-list{margin:0;padding:0;list-style:none}
+.steps-list li{padding:7px 9px;border-radius:8px;cursor:pointer;line-height:1.35;color:var(--ink2);font-size:14px}
+.steps-list li b{color:var(--ink)}
+.steps-list li.cur{background:#e5f5ee}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font-size:13px;color:var(--ink2)}
+.legend div{display:flex;align-items:center;gap:8px}
+details{border-top:1px solid var(--line);padding:12px 16px}
+summary{cursor:pointer;font:700 14px Inter}
+.gloss{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin-top:10px;font-size:13.5px;color:var(--ink2)}
+.gloss b{color:var(--ink)}
+.note{font-size:12.5px;color:var(--mute);margin-top:16px;line-height:1.5}
+.side{display:flex;flex-direction:column;gap:16px}
+</style>
+</head>
+<body>
+<header><div class="hwrap">
+  <div class="kicker">Émeraude SG 2 · Saison 2026-2027</div>
+  <h1>Enclenchements <span>animés</span></h1>
+  <nav class="sections" id="sections"></nav>
+</div></header>
+<main>
+  <div class="plays" id="plays"></div>
+  <div class="grid">
+    <div class="card">
+      <div class="court-head">
+        <div class="court-title" id="ptitle"></div>
+        <div class="variants" id="variants"></div>
+      </div>
+      <svg id="court" viewBox="-10.6 -1.5 21.2 14.4" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0e1412"/></marker>
+          <marker id="ahp" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0a6e4c"/></marker>
+          <marker id="ahs" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d8433b"/></marker>
+        </defs>
+        <g id="field"></g>
+        <g id="trailsOld" opacity=".22"></g>
+        <g id="trails"></g>
+        <g id="players"></g>
+        <g id="ballG"><circle id="ball" r=".26" fill="#ffc928" stroke="#7a5a00" stroke-width=".06"/></g>
+        <text id="goalTxt" x="0" y="2.4" text-anchor="middle" font-family="Barlow Condensed" font-weight="800" font-size="1.6" fill="#d8433b" opacity="0">TIR !</text>
+      </svg>
+      <div class="caption">
+        <div class="cap-n" id="capN">1/4</div>
+        <div><div class="cap-l" id="capL"></div><div class="cap-t" id="capT"></div></div>
+      </div>
+      <div class="timeline" id="timeline"></div>
+      <div class="controls">
+        <button class="btn" id="bRestart" title="Recommencer">⟲</button>
+        <button class="btn" id="bPrev" title="Temps précédent">◀</button>
+        <button class="btn play" id="bPlay">▶ Lecture</button>
+        <button class="btn" id="bNext" title="Temps suivant">▶︎|</button>
+        <select class="btn" id="speed" title="Vitesse">
+          <option value="0.5">0,5×</option><option value="0.75">0,75×</option><option value="1" selected>1×</option><option value="1.5">1,5×</option>
+        </select>
+        <span class="sp"></span>
+        <label class="tg"><input type="checkbox" id="pauseEach"> Pause à chaque temps</label>
+        <label class="tg"><input type="checkbox" id="loop" checked> En boucle</label>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card info" id="info"></div>
+      <div class="card">
+        <div class="info">
+          <h3>Légende</h3>
+          <div class="legend">
+            <div><svg width="26" height="26" viewBox="-1 -1 2 2"><circle r=".9" fill="#0f9d6c"/></svg> Attaquant</div>
+            <div><svg width="26" height="26" viewBox="-1 -1 2 2"><circle r=".9" fill="#d8433b"/></svg> Défenseur</div>
+            <div><svg width="44" height="14"><line x1="2" y1="7" x2="40" y2="7" stroke="#0e1412" stroke-width="2.4"/></svg> Course</div>
+            <div><svg width="44" height="14"><path d="M2 7 q4 -6 8 0 t8 0 t8 0 t8 0 t8 0" fill="none" stroke="#0e1412" stroke-width="2.2"/></svg> Dribble</div>
+            <div><svg width="44" height="14"><line x1="2" y1="7" x2="40" y2="7" stroke="#0a6e4c" stroke-width="2.4" stroke-dasharray="5 4"/></svg> Passe</div>
+            <div><svg width="44" height="14"><line x1="2" y1="7" x2="40" y2="7" stroke="#d8433b" stroke-width="3"/></svg> Tir</div>
+          </div>
+        </div>
+        <details>
+          <summary>Lexique</summary>
+          <div class="gloss">
+            <b>ALG / ALD</b><span>Ailier gauche / droit</span>
+            <b>ARG / ARD</b><span>Arrière gauche / droit (AR = un arrière)</span>
+            <b>DC</b><span>Demi-centre</span>
+            <b>PVT</b><span>Pivot</span>
+            <b>R2</b><span>Rentrée en 2ᵉ pivot (un joueur de base rejoint la ligne des 6 m)</span>
+            <b>Glisse</b><span>Le pivot se déplace latéralement le long des 6 m</span>
+            <b>Croisé</b><span>Deux joueurs se croisent avec transmission</span>
+            <b>Fort interne</b><span>Attaque puissante vers l’intérieur, au centre</span>
+            <b>Aplatir</b><span>Fixer puis décaler latéralement pour lancer un partenaire</span>
+            <b>3 bas / 3 haut</b><span>Sur 1-5 : le 3 sur la ligne / le 3 avancé</span>
+          </div>
+        </details>
+      </div>
+      <p class="note">Animations construites à partir de la fiche du coach (croquis + annotations). Les positions et trajectoires sont indicatives : c’est le principe de chaque enclenchement qui compte. Exemples montrés côté gauche, à inverser côté droit.</p>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ---------- Données ---------- */
+const ATT_BASE={ALG:[-9.3,1.2],ARG:[-6.2,10.2],DC:[0,11.2],ARD:[6.2,10.2],ALD:[9.3,1.2],PVT:[-3.1,6.1]};
+const DEFS={
+  d06:{g1:['1',-7.2,3.0],g2:['2',-4.8,5.4],g3:['3',-1.7,6.5],d3:['3',1.7,6.5],d2:['2',4.8,5.4],d1:['1',7.2,3.0]},
+  d15:{g1:['1',-7.2,3.0],g2:['2',-4.3,5.7],b3:['3b',-0.6,6.6],d2:['2',3.6,5.9],d1:['1',7.2,3.0],h3:['3h',0.2,9.6]},
+  d05:{g1:['1',-7.0,3.2],g2:['2',-4.0,5.8],c3:['3',0,6.6],d2:['2',4.0,5.8],d1:['1',7.0,3.2]}
+};
+const R=(p,x,y,s,e,vx,vy)=>({k:'run',p,to:[x,y],s,e,via:vx!=null?[vx,vy]:null});
+const D=(p,x,y,s,e,vx,vy)=>({k:'drib',p,to:[x,y],s,e,via:vx!=null?[vx,vy]:null});
+const M=(p,x,y,s,e)=>({k:'def',p,to:[x,y],s,e,via:null});
+const P=(p,to,s,e)=>({k:'pass',p,to,s,e});
+const S=(p,s,e,tx)=>({k:'shoot',p,s,e,tx});
+
+const algRecoit=(extra=[])=>({l:'Tps 1',t:'L’ALG monte et reçoit la balle à l’intersection 9 m / ligne de touche.',
+  a:[R('ALG',-9.2,3.5,0,.5),P('ARG','ALG',.35,.75),M('g1',-8.3,3.9,.3,.8),...extra]});
+const echanges=(txt,extra=[])=>({l:'Tps 1 – 2 échanges',t:txt,
+  a:[P('DC','ARG',0,.22),R('ARG',-7.0,9.6,.05,.4),P('ARG','DC',.32,.52),R('ARG',-6.4,10.6,.5,.72),P('DC','ARG',.62,.85),...extra]});
+function adaptV(d3,pvt,g2to,d3to,extraInit={}){
+  return {n:'Adaptation',init:{PVT:pvt,ball:'ARG',...extraInit},steps:[
+    {l:'Le n°1 ferme',t:'Le n°1 adverse sort et interdit la passe vers l’ALG.',a:[R('ALG',-9.2,3.5,0,.5),M('g1',-8.4,4.9,.15,.6)]},
+    {l:'Dribble dans l’espace du PVT',t:'Le PVT glisse entre le 1 et le 2 ; l’ARG attaque en dribble l’espace laissé par le PVT.',
+      a:[R('PVT',-6.1,4.4,0,.5,-5.2,6.9),M('g2',g2to[0],g2to[1],.2,.6),D('ARG',-3.1,8.0,.2,.8,-4.8,9.6),M(d3,d3to[0],d3to[1],.5,.9)]},
+    {l:'Finition',t:'Tir de l’ARG, ou passe au PVT si le défenseur ferme.',a:[S('ARG',.1,.45,-0.6)]}
+  ]};
+}
+const ADAPT_TXT='Si le n°1 interdit la passe à l’ALG : l’ARG part en dribble dans l’espace du PVT, qui glisse entre le 1 et le 2.';
+const MEP_23='PVT entre le 1 et le 2, côté de l’ailier qui a le ballon ; il glisse ensuite entre le 2 et le 3 (exemple côté gauche).';
+
+const SECTIONS=[['06','Sur 0-6'],['15','Sur 1-5'],['sup','Supériorité +1'],['inf','Infériorité −1']];
+const PLAYS=[
+/* ===== 0-6 ===== */
+{id:'bbq-06',sec:'06',name:'BBQ',def:'d06',mep:MEP_23,obj:'Duel sur le 3 bas isolé. Tir du DC à 9 m.',adapt:ADAPT_TXT,
+ variants:[
+  {n:'Principal',init:{PVT:[-6.1,4.4],ball:'ARG'},steps:[
+    algRecoit([R('ARG',-5.7,10.9,.6,.95)]),
+    {l:'Tps 2',t:'Le PVT glisse de 1-2 vers 2-3 et bloque le 2. L’ALG lance l’ARG au duel sur le 3 bas.',
+     a:[R('PVT',-3.4,6.05,0,.5,-5.0,6.9),M('g2',-4.9,5.2,.15,.55),R('ARG',-2.5,8.5,.15,.7,-4.6,9.6),P('ALG','ARG',.45,.75),M('g3',-2.2,7.4,.5,.9)]},
+    {l:'Selon le DC adverse',t:'Double duel, ou l’ARG aplatit : il fixe et lance le DC qui tire à 9 m.',
+     a:[D('ARG',-1.2,8.3,0,.4),M('d3',-0.4,7.4,.1,.5),R('DC',1.4,10.0,0,.45,0.8,11.2),P('ARG','DC',.42,.65),S('DC',.72,.95)]}
+  ]},
+  {n:'Continuité',init:{PVT:[-6.1,4.4],ball:'DC'},steps:[
+    {l:'L’ALD reçoit',t:'Le ballon part à droite : l’ALD monte et reçoit à l’intersection 9 m / touche.',
+     a:[P('DC','ARD',0,.3),R('ALD',9.2,3.5,.1,.55),P('ARD','ALD',.45,.8),M('d1',8.3,3.9,.4,.85)]},
+    {l:'R2 du DC',t:'Le DC rentre en R2 entre le 2 et le 3 (côté droit). L’ALD lance l’ARD à l’intérieur.',
+     a:[R('DC',3.3,6.1,0,.55,2.2,8.8),M('d2',5.2,5.0,.3,.7),R('ARD',0.5,8.7,.25,.8,4.2,9.4),P('ALD','ARD',.5,.8),M('d3',1.0,7.3,.6,.95),M('g3',-1.0,7.0,.65,.95)]},
+    {l:'ARD entre les deux 3',t:'Quand l’ARD arrive entre les deux 3 : le PVT glisse entre le 2 et le 3, l’ARG part entre le 1 et le 2.',
+     a:[R('PVT',-3.4,6.05,0,.5,-5.0,6.9),M('g2',-4.9,5.2,.15,.55),R('ARG',-6.2,7.3,.1,.65,-6.8,9.4),P('ARD','ARG',.5,.78),S('ARG',.82,.98,-0.5)]}
+  ]},
+  adaptV('g3',[-3.1,6.1],[-4.4,5.9],[-2.4,7.1])
+ ]},
+{id:'pierrick-06',sec:'06',name:'Pierrick',def:'d06',
+ mep:'Croisé DC / AR à l’opposé du PVT + R2 de l’AR sur le PVT, qui glisse.',
+ obj:'Créer du mouvement de joueurs à l’extérieur du dispositif puis à l’intérieur, pour venir fort central et exploiter l’extérieur.',
+ variants:[{n:'Principal',init:{PVT:[-3.1,6.1],ball:'DC'},steps:[
+    {l:'Tps 1',t:'Croisé DC / ARD, tranquille.',a:[R('DC',3.4,10.2,0,.6),R('ARD',1.0,11.4,.15,.8,4.4,12.2),P('DC','ARD',.5,.75)]},
+    {l:'Tps 2',t:'L’ARD donne à l’ARG, qui reste « statique ».',a:[P('ARD','ARG',.05,.5),R('DC',6.0,10.4,0,.6)]},
+    {l:'Tps 3',t:'À la réception de l’ARG : l’ARD fait R2 sur le PVT, et le PVT glisse à l’opposé, entre le 3 et le 2 de l’autre côté.',
+     a:[R('PVT',3.2,6.15,0,.65,0.2,7.7),R('ARD',-3.1,6.1,.15,.75,-0.8,9.2),M('d3',1.4,6.8,.4,.8),M('d2',5.0,5.2,.4,.8)]},
+    {l:'Tps 4',t:'L’ARG part fort à l’intérieur en dribble.',
+     a:[D('ARG',-0.6,8.4,0,.55,-4.4,9.8),M('g3',-1.6,7.3,.3,.7),M('d3',0.9,7.3,.3,.7),S('ARG',.68,.92,0.2)]}
+ ]}]},
+{id:'pizza-06',sec:'06',name:'Pizza',def:'d06',
+ mep:'R2 du DC sur le PVT après renversement.',
+ obj:'Créer du mouvement de joueurs à l’intérieur du dispositif pour venir fort central et exploiter l’extérieur.',
+ variants:[{n:'Principal',init:{PVT:[3.1,6.1],ball:'ARD'},steps:[
+    {l:'Renversement',t:'Le ballon revient au DC.',a:[P('ARD','DC',0,.45)]},
+    echanges('Le DC joue deux fois avec l’AR à l’opposé du PVT (ici l’ARG).'),
+    {l:'Tps 1 – R2 du DC',t:'Puis le DC rentre en R2 sur le PVT, qui glisse.',
+     a:[R('PVT',4.0,5.75,0,.45),M('d2',5.0,5.1,.1,.5),R('DC',2.75,6.35,.1,.65,1.8,9.4),M('d3',1.4,6.75,.4,.75)]},
+    {l:'Tps 2',t:'L’AR revient fort à l’intérieur.',
+     a:[D('ARG',-0.2,8.2,0,.6,-4.6,8.8),M('g3',-1.3,7.3,.3,.7),M('d3',0.9,7.2,.35,.75),S('ARG',.72,.95,-0.8)]}
+ ]}]},
+{id:'poisson-06',sec:'06',name:'Poisson',def:'d06',mep:MEP_23,obj:'Jouer autour, à l’extérieur.',adapt:ADAPT_TXT,
+ variants:[
+  {n:'Principal',init:{PVT:[-6.1,4.4],ball:'ARG'},steps:[
+    algRecoit(),
+    {l:'Tps 2 – R2 de l’ARD',t:'L’ARD rentre en R2 entre le 3 et le 2.',
+     a:[R('ARD',3.2,6.15,0,.6,4.6,8.6),M('d3',1.4,6.8,.3,.7),M('d2',5.0,5.2,.3,.7),R('DC',-1.6,10.8,.2,.8)]},
+    {l:'Tps 2 – l’ALG joue autour',t:'L’ALG joue autour du PVT, qui glisse entre le 2 et le 3 pendant la course de l’ailier.',
+     a:[R('PVT',-3.4,6.05,0,.5,-5.0,6.9),M('g2',-4.9,5.2,.15,.55),D('ALG',-5.2,7.6,.1,.65,-7.8,7.4),M('g1',-7.0,5.0,.25,.75),S('ALG',.74,.96,-1.3)]}
+  ]},
+  adaptV('g3',[-3.1,6.1],[-4.4,5.9],[-2.4,7.1])
+ ]},
+/* ===== 1-5 ===== */
+{id:'bbq-15',sec:'15',name:'BBQ',def:'d15',mep:MEP_23,obj:'Tir à 6 m central.',cles:'Action du 3 haut.',note:'Même continuité que sur 0-6.',adapt:ADAPT_TXT,
+ variants:[
+  {n:'Principal',init:{PVT:[-5.9,4.5],DC:[0,12.2],ball:'ARG'},steps:[
+    algRecoit([M('h3',-1.2,9.8,.3,.85)]),
+    {l:'Tps 2',t:'Le PVT glisse entre le 2 et le 3. L’ALG lance l’ARG au duel sur le 3 bas.',
+     a:[R('PVT',-3.0,6.1,0,.5,-4.6,6.9),M('g2',-4.6,5.5,.15,.55),R('ARG',-2.1,8.5,.15,.7,-4.4,9.9),P('ALG','ARG',.45,.75),M('b3',-1.0,7.5,.5,.9),M('h3',-1.0,9.4,.55,.95)]},
+    {l:'Point clé : le 3 haut',t:'Si le 3 haut vient aider, le PVT glisse dans le dos du 3 bas : tir à 6 m central.',
+     a:[R('PVT',0.2,6.7,0,.5,-1.3,6.1),P('ARG','PVT',.45,.7),S('PVT',.75,.95,0.6)]}
+  ]},
+  {n:'Continuité',init:{PVT:[-5.9,4.5],DC:[0,12.2],ball:'DC'},steps:[
+    {l:'L’ALD reçoit',t:'Le ballon part à droite : l’ALD monte et reçoit à l’intersection 9 m / touche.',
+     a:[P('DC','ARD',0,.3),R('ALD',9.2,3.5,.1,.55),P('ARD','ALD',.45,.8),M('d1',8.3,3.9,.4,.85),M('h3',2.0,9.8,.2,.8)]},
+    {l:'R2 du DC',t:'Le DC rentre en R2 entre le 3 et le 2. L’ALD lance l’ARD à l’intérieur.',
+     a:[R('DC',1.6,6.45,0,.55,1.2,9.4),M('d2',3.9,5.7,.3,.7),R('ARD',-0.5,8.6,.25,.8,3.6,8.6),P('ALD','ARD',.5,.8),M('b3',-0.5,7.4,.6,.95),M('h3',0.4,9.6,.6,.95)]},
+    {l:'ARD au centre',t:'Quand l’ARD arrive au centre : le PVT glisse entre le 2 et le 3, l’ARG part entre le 1 et le 2.',
+     a:[R('PVT',-3.0,6.1,0,.5,-4.6,6.9),M('g2',-4.6,5.5,.15,.55),R('ARG',-6.2,7.3,.1,.65,-6.8,9.4),P('ARD','ARG',.5,.78),S('ARG',.82,.98,-0.5)]}
+  ]},
+  adaptV('b3',[-2.4,6.3],[-4.0,6.0],[-1.3,7.3],{DC:[0,12.2]})
+ ]},
+{id:'pizza-15',sec:'15',name:'Pizza',def:'d15',mep:'R2 du DC sur le PVT après renversement.',obj:'Tir à 6 m central, ou ailier grand angle.',cles:'Action du 3 haut.',
+ variants:[{n:'Principal',init:{PVT:[1.5,6.4],DC:[0,12.2],ball:'ARD'},steps:[
+    {l:'Renversement',t:'Le ballon revient au DC.',a:[P('ARD','DC',0,.45)]},
+    echanges('Le DC joue deux fois avec l’AR à l’opposé du PVT (ici l’ARG).',[M('h3',-1.0,9.8,.2,.8)]),
+    {l:'Tps 1 – R2 du DC',t:'Puis le DC rentre en R2 sur le PVT, qui glisse.',
+     a:[R('PVT',2.7,6.2,0,.4),M('d2',3.9,5.7,.1,.5),R('DC',1.2,6.6,.15,.7,0.9,9.6)]},
+    {l:'Tps 2',t:'L’AR revient fort interne. Selon le 3 haut : passe au DC pour le tir à 6 m central (ou ailier grand angle).',
+     a:[D('ARG',-1.9,8.6,0,.5,-4.8,9.4),M('b3',-1.0,7.5,.3,.65),M('h3',-0.9,9.6,.25,.6),P('ARG','DC',.55,.75),S('DC',.8,.98,-0.5)]}
+ ]}]},
+{id:'poisson-15',sec:'15',name:'Poisson',def:'d15',mep:MEP_23,obj:'Jouer autour, à l’extérieur.',adapt:ADAPT_TXT,
+ variants:[
+  {n:'Principal',init:{PVT:[-5.9,4.5],DC:[0,12.2],ball:'ARG'},steps:[
+    algRecoit([M('h3',-1.2,9.8,.3,.85)]),
+    {l:'Tps 2 – R2 de l’ARD',t:'L’ARD rentre en R2 entre le 3 et le 2.',
+     a:[R('ARD',1.6,6.45,0,.6,3.4,9.0),M('d2',3.9,5.7,.3,.7),R('DC',-1.8,11.2,.2,.8)]},
+    {l:'Tps 2 – l’ALG joue autour',t:'L’ALG joue autour du PVT, qui glisse entre le 2 et le 3 pendant la course de l’ailier.',
+     a:[R('PVT',-3.0,6.1,0,.5,-4.6,6.9),M('g2',-4.6,5.5,.15,.55),D('ALG',-5.0,7.8,.1,.65,-7.6,7.4),M('g1',-6.9,5.0,.25,.75),M('h3',-2.4,9.8,.3,.7),S('ALG',.74,.96,-1.3)]}
+  ]},
+  adaptV('b3',[-2.4,6.3],[-4.0,6.0],[-1.3,7.3],{DC:[0,12.2]})
+ ]},
+/* ===== Supériorité +1 ===== */
+{id:'sup-pizza',sec:'sup',name:'Pizza',def:'d05',mep:'PVT entre le 1 et le 2.',obj:'Fixer avec le PVT et le R2, puis venir fort au centre.',
+ variants:[{n:'Principal',init:{PVT:[-5.5,4.9],ball:'ARD'},steps:[
+    {l:'Renversement',t:'Le ballon revient au DC.',a:[P('ARD','DC',0,.45)]},
+    echanges('Le DC joue deux fois avec l’ARG.'),
+    {l:'R2 du DC',t:'Le DC rentre en R2 entre le 3 et le 2.',a:[R('DC',2.0,6.5,0,.55,1.4,9.2),M('d2',4.3,5.6,.3,.7)]},
+    {l:'ARG fort interne',t:'L’ARG revient fort à l’intérieur, entre le 2 et le 3.',
+     a:[D('ARG',-1.9,8.2,0,.6,-4.8,8.8),M('c3',-0.6,7.6,.3,.7),S('ARG',.72,.95,-1.1)]}
+ ]}]},
+{id:'sup-bbq',sec:'sup',name:'BBQ',def:'d05',mep:'PVT entre le 1 et le 2 côté ailier, il glisse entre le 2 et le 3.',obj:'Sans duel : chacun son espace, le ballon circule jusqu’au joueur libre.',
+ variants:[{n:'Principal',init:{PVT:[-5.6,4.8],ball:'ARG'},steps:[
+    algRecoit(),
+    {l:'Chacun son espace',t:'Le PVT glisse entre le 2 et le 3, chacun attaque son espace sans chercher le duel.',
+     a:[R('PVT',-2.1,6.35,0,.45,-4.0,6.9),M('g2',-4.3,5.6,.15,.5),R('ARG',-3.6,9.2,0,.45),P('ALG','ARG',.3,.55),R('DC',1.6,9.4,.2,.6),P('ARG','DC',.6,.8),M('c3',0.8,7.4,.6,.9)]},
+    {l:'Joueur libre',t:'Le ballon va vite jusqu’au joueur libre (ici l’ALD).',
+     a:[R('ARD',4.8,9.2,0,.3),P('DC','ARD',.1,.35),M('d2',4.4,6.8,.25,.55),P('ARD','ALD',.45,.68),S('ALD',.74,.96,-1.0)]}
+ ]}]},
+{id:'sup-pizza-inv',sec:'sup',name:'Pizza inversé (Calzone)',def:'d05',mep:'PVT entre le 1 et le 2.',obj:'Après un aller-retour avec l’ARG, le DC donne à l’AR à l’opposé du PVT et fait R2 entre le 1 et le 2. L’ARG part entre le 2 et le 3.',
+ variants:[{n:'Principal',init:{PVT:[-5.5,4.9],ball:'DC'},steps:[
+    {l:'Aller-retour DC / ARG',t:'Aller-retour de passe entre le DC et l’ARG.',a:[P('DC','ARG',0,.35),R('ARG',-6.6,9.6,.1,.4),P('ARG','DC',.5,.85),R('ARG',-6.2,10.4,.6,.9)]},
+    {l:'DC → ARD',t:'Le DC donne à l’AR à l’opposé du PVT.',a:[P('DC','ARD',0,.4),R('ARD',5.4,9.6,0,.4)]},
+    {l:'R2 du DC',t:'Le DC rentre en R2 entre le 1 et le 2 ; l’ARD fixe.',
+     a:[R('DC',5.7,4.6,0,.6,3.2,8.8),M('d2',3.7,6.0,.3,.7),M('d1',7.4,3.0,.3,.7),D('ARD',4.4,8.8,.2,.65)]},
+    {l:'ARG entre 2 et 3',t:'L’ARG part entre le 2 et le 3 et reçoit.',
+     a:[R('ARG',-2.2,8.0,0,.55,-4.8,9.6),P('ARD','ARG',.35,.7),M('c3',-0.6,7.4,.5,.85),S('ARG',.75,.95,-1.0)]}
+ ]}]},
+/* ===== Infériorité -1 ===== */
+{id:'inf-poisson',sec:'inf',name:'Poisson',def:'d06',
+ mep:'R2 d’un AR entre le 1 et le 2, l’ailier joue autour.',
+ obj:'Jouer 2 contre 2 à l’extérieur, ou faire monter la défense et exploiter le couloir dans son dos dans la continuité.',
+ variants:[{n:'Principal',init:{omit:['PVT'],ARG:[-5.8,10.2],DC:[0,11.4],ARD:[5.8,10.2],ball:'ARG'},steps:[
+    algRecoit(),
+    {l:'R2 + l’ALG joue autour',t:'L’ARG rentre en R2 entre le 1 et le 2 ; l’ALG joue autour : 2 contre 2 à l’extérieur.',
+     a:[R('ARG',-6.1,4.3,0,.55,-6.6,8.0),D('ALG',-5.2,8.4,.35,.9,-8.0,7.0),M('g1',-7.4,5.0,.4,.9),R('DC',-2.0,10.8,.2,.8),R('ARD',2.6,10.6,.25,.85)]},
+    {l:'La défense monte',t:'Si la défense sort sur l’ALG, elle laisse un couloir dans son dos.',
+     a:[M('g2',-4.6,7.4,0,.45),M('g3',-2.2,7.8,.05,.5),M('d3',1.2,7.6,.1,.55),M('d2',4.2,6.8,.15,.6)]},
+    {l:'Couloir dans le dos',t:'Le joueur en R2 file le long des 6 m dans le dos de la défense et reçoit.',
+     a:[R('ARG',-0.6,6.15,0,.6,-3.9,5.9),P('ALG','ARG',.45,.75),S('ARG',.8,.98,0.8)]}
+ ]}]}
+];
+
+/* ---------- Moteur ---------- */
+const ease=u=>u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;
+const lerp=(a,b,u)=>[a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u];
+const OFF=[.42,-.4];
+const isMove=a=>a.k==='run'||a.k==='drib'||a.k==='def';
+
+function compile(play,v){
+  const ents={};
+  for(const [id,[lab,x,y]] of Object.entries(DEFS[play.def])) ents[id]={type:'d',label:lab,p:[x,y]};
+  const init=v.init||{};
+  for(const id of Object.keys(ATT_BASE)){
+    if(init.omit&&init.omit.includes(id)) continue;
+    ents[id]={type:'a',label:id,p:(init[id]||ATT_BASE[id]).slice()};
+  }
+  const raw=[{l:'Mise en place',t:play.mep,a:[]},...v.steps];
+  let pos={};for(const id in ents) pos[id]=ents[id].p.slice();
+  let holder=init.ball;
+  const steps=[];
+  for(const st of raw){
+    const start={pos:JSON.parse(JSON.stringify(pos)),holder};
+    const acts=st.a.map(a=>({...a})).sort((x,y)=>x.s-y.s);
+    const cur=JSON.parse(JSON.stringify(pos));
+    for(const a of acts){ if(isMove(a)){ a.p0=cur[a.p].slice(); cur[a.p]=a.to.slice(); } }
+    let h=holder;
+    for(const a of acts){ if(a.k==='pass') h=a.to; if(a.k==='shoot') h=null; }
+    steps.push({l:st.l,t:st.t,acts,start,dur:st.d||(acts.length?3.2:1.8)});
+    pos=cur; holder=h;
+  }
+  return {ents,steps};
+}
+function pathPt(a,u){
+  if(a.via){const m=1-u;return [m*m*a.p0[0]+2*m*u*a.via[0]+u*u*a.to[0], m*m*a.p0[1]+2*m*u*a.via[1]+u*u*a.to[1]];}
+  return lerp(a.p0,a.to,u);
+}
+function posAt(st,id,t){
+  let p=st.start.pos[id];
+  for(const a of st.acts){
+    if(a.p!==id||!isMove(a)) continue;
+    if(t>=a.e) p=a.to;
+    else if(t>a.s) return pathPt(a,ease((t-a.s)/(a.e-a.s)));
+    else break;
+  }
+  return p;
+}
+function shotTarget(a,st){const A=posAt(st,a.p,a.s);return [a.tx!=null?a.tx:(A[0]>0?-0.9:0.9),-0.25];}
+function ballAt(st,t){
+  let h=st.start.holder;
+  for(const a of st.acts){
+    if(a.k==='pass'){
+      if(t>=a.e){h=a.to;continue;}
+      if(t>a.s){const u=ease((t-a.s)/(a.e-a.s));const A=posAt(st,a.p,t),B=posAt(st,a.to,t);
+        return {p:lerp([A[0]+OFF[0],A[1]+OFF[1]],[B[0]+OFF[0],B[1]+OFF[1]],u),fly:true};}
+      break;
+    }
+    if(a.k==='shoot'){
+      const A=posAt(st,a.p,a.s),G=shotTarget(a,st);
+      if(t>=a.e) return {p:G,goal:true};
+      if(t>a.s){const u=(t-a.s)/(a.e-a.s);return {p:lerp([A[0]+OFF[0],A[1]+OFF[1]],G,u*u*(3-2*u)),fly:true};}
+      break;
+    }
+  }
+  if(h==null) return null;
+  const P0=posAt(st,h,t);return {p:[P0[0]+OFF[0],P0[1]+OFF[1]],holder:h};
+}
+
+/* ---------- Dessin ---------- */
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+
+function drawField(){
+  const g=$('field');g.innerHTML='';
+  el('rect',{x:-10,y:0,width:20,height:13.2,fill:'#e7eef3'},g);
+  const sx=Math.sqrt(81-8.5*8.5);
+  el('path',{d:`M-7.5,0 A6,6 0 0,0 -1.5,6 L1.5,6 A6,6 0 0,0 7.5,0 Z`,fill:'#c6d8e6'},g);
+  el('path',{d:`M-7.5,0 A6,6 0 0,0 -1.5,6 L1.5,6 A6,6 0 0,0 7.5,0`,fill:'none',stroke:'#fff',"stroke-width":.12},g);
+  el('path',{d:`M-10,${sx} A9,9 0 0,0 -1.5,9 L1.5,9 A9,9 0 0,0 10,${sx}`,fill:'none',stroke:'#fff',"stroke-width":.1,"stroke-dasharray":'.35 .3'},g);
+  el('line',{x1:-0.5,y1:7,x2:0.5,y2:7,stroke:'#fff',"stroke-width":.12},g);
+  el('line',{x1:-0.15,y1:4,x2:0.15,y2:4,stroke:'#fff',"stroke-width":.1},g);
+  el('rect',{x:-10,y:0,width:20,height:13.2,fill:'none',stroke:'#fff',"stroke-width":.14},g);
+  el('rect',{x:-1.5,y:-0.85,width:3,height:.85,fill:'#fff',stroke:'#5b6b7a',"stroke-width":.08},g);
+  el('path',{d:'M-1.5,-0.85 L-1.5,0 M1.5,-0.85 L1.5,0',stroke:'#d8433b',"stroke-width":.16},g);
+  const t=el('text',{x:-9.7,y:12.8,"font-size":.55,fill:'#8aa0b0',"font-family":'Inter',"font-weight":600},g);t.textContent='9 m';
+}
+
+let C=null, PLAY=null, VAR=0, T=0, playing=false, last=null, holdUntil=0;
+const playerEls={};
+
+function buildPlayers(){
+  const g=$('players');g.innerHTML='';
+  for(const k in playerEls) delete playerEls[k];
+  const gk=el('g',{},g);el('circle',{r:.5,fill:'#9aa7b0',stroke:'#fff',"stroke-width":.08},gk);
+  const gt=el('text',{y:.15,"text-anchor":'middle',"font-size":.36,fill:'#fff',"font-family":'Inter',"font-weight":700},gk);gt.textContent='GB';
+  playerEls.GB=gk;
+  const order=Object.keys(C.ents).sort((a,b)=>(C.ents[a].type==='d')-(C.ents[b].type==='d'));
+  for(const id of order.reverse()){
+    const e=C.ents[id];const pg=el('g',{},g);
+    if(e.type==='a'){
+      el('circle',{r:.62,fill:'#0f9d6c',stroke:'#fff',"stroke-width":.09},pg);
+      const tx=el('text',{y:.14,"text-anchor":'middle',"font-size":e.label.length>2?.36:.42,fill:'#fff',"font-family":'Inter',"font-weight":700},pg);tx.textContent=e.label;
+    }else{
+      el('circle',{r:.55,fill:'#d8433b',stroke:'#fff',"stroke-width":.09},pg);
+      const tx=el('text',{y:.17,"text-anchor":'middle',"font-size":e.label.length>1?.4:.5,fill:'#fff',"font-family":'Barlow Condensed',"font-weight":800},pg);tx.textContent=e.label;
+    }
+    playerEls[id]=pg;
+  }
+}
+
+function samplePath(pts){return 'M'+pts.map(p=>p[0].toFixed(3)+','+p[1].toFixed(3)).join(' L');}
+function actionPath(st,a,u){
+  if(u<=0) return null;
+  if(isMove(a)){
+    const N=40,pts=[];
+    for(let i=0;i<=N;i++){const uu=(i/N)*u;pts.push(pathPt(a,uu));}
+    if(a.k==='drib'){
+      let dist=0;const out=[pts[0]];
+      for(let i=1;i<pts.length;i++){
+        const dx=pts[i][0]-pts[i-1][0],dy=pts[i][1]-pts[i-1][1];const L=Math.hypot(dx,dy)||1e-6;dist+=L;
+        const nx=-dy/L,ny=dx/L;const amp=(i>=pts.length-2)?0:.17*Math.sin(dist*5.2);
+        out.push([pts[i][0]+nx*amp,pts[i][1]+ny*amp]);
+      }
+      return samplePath(out);
+    }
+    return samplePath(pts);
+  }
+  if(a.k==='pass'){
+    const A=posAt(st,a.p,a.s),B=posAt(st,a.to,a.e);
+    const A2=[A[0]+OFF[0],A[1]+OFF[1]],B2=[B[0]+OFF[0],B[1]+OFF[1]];
+    return samplePath([A2,lerp(A2,B2,u)]);
+  }
+  if(a.k==='shoot'){
+    const A=posAt(st,a.p,a.s),G=shotTarget(a,st);const A2=[A[0]+OFF[0],A[1]+OFF[1]];
+    return samplePath([A2,lerp(A2,G,u)]);
+  }
+}
+function drawTrails(g,st,t,full){
+  g.innerHTML='';
+  for(const a of st.acts){
+    if(a.k==='def') continue;
+    const u=full?1:Math.max(0,Math.min(1,(t-a.s)/(a.e-a.s)));
+    const d=actionPath(st,a,u);if(!d) continue;
+    if(a.k==='pass') el('path',{d,fill:'none',stroke:'#0a6e4c',"stroke-width":.13,"stroke-dasharray":'.35 .25',"marker-end":'url(#ahp)'},g);
+    else if(a.k==='shoot') el('path',{d,fill:'none',stroke:'#d8433b',"stroke-width":.17,"marker-end":'url(#ahs)'},g);
+    else el('path',{d,fill:'none',stroke:'#0e1412',"stroke-width":.12,"stroke-linecap":'round',"stroke-linejoin":'round',"marker-end":'url(#ah)'},g);
+  }
+  for(const a of st.acts){
+    if(a.k!=='def') continue;
+    const u=full?1:Math.max(0,Math.min(1,(t-a.s)/(a.e-a.s)));
+    const d=actionPath(st,a,u);if(!d) continue;
+    el('path',{d,fill:'none',stroke:'#d8433b',"stroke-width":.07,opacity:.55,"stroke-dasharray":'.12 .14'},g);
+  }
+}
+
+function render(){
+  const N=C.steps.length;
+  const i=Math.min(Math.floor(T),N-1);const t=T>=N?1:T-i;
+  const st=C.steps[i];
+  for(const id in C.ents){const p=posAt(st,id,t);playerEls[id].setAttribute('transform',`translate(${p[0]},${p[1]})`);}
+  const b=ballAt(st,t);const ball=$('ball');
+  if(b){ball.style.display='';ball.setAttribute('cx',b.p[0]);ball.setAttribute('cy',b.p[1]);}else ball.style.display='none';
+  const bx=b?b.p[0]:0;playerEls.GB.setAttribute('transform',`translate(${Math.max(-1.1,Math.min(1.1,bx*.14))},0.95)`);
+  $('goalTxt').setAttribute('opacity',b&&b.goal?1:0);
+  drawTrails($('trails'),st,t,false);
+  if(i>0) drawTrails($('trailsOld'),C.steps[i-1],1,true); else $('trailsOld').innerHTML='';
+  // caption + timeline
+  $('capN').textContent=i===0?'MEP':`${i}/${N-1}`;
+  $('capL').textContent=st.l;$('capT').textContent=st.t;
+  [...$('timeline').children].forEach((s,k)=>{s.classList.toggle('cur',k===i);s.firstChild.style.width=(k<i?100:k===i?t*100:0)+'%';});
+  [...document.querySelectorAll('.steps-list li')].forEach((li,k)=>li.classList.toggle('cur',k===i));
+}
+
+/* ---------- Lecture ---------- */
+function setPlaying(v){playing=v;$('bPlay').textContent=v?'❚❚ Pause':'▶ Lecture';if(v){last=null;requestAnimationFrame(frame);}}
+function frame(ts){
+  if(!playing) return;
+  if(last==null) last=ts;
+  const dt=(ts-last)/1000;last=ts;
+  const N=C.steps.length;
+  if(holdUntil){ if(ts<holdUntil){requestAnimationFrame(frame);return;} holdUntil=0; if(T>=N) T=0; }
+  const sp=parseFloat($('speed').value);
+  const i=Math.min(Math.floor(T),N-1);
+  let nt=T+dt*sp/C.steps[i].dur;
+  if(Math.floor(nt)>i){
+    if(i+1>=N){ T=N; render(); if($('loop').checked){holdUntil=ts+1600;requestAnimationFrame(frame);} else setPlaying(false); return; }
+    if($('pauseEach').checked){ T=i+0.9999; render(); setPlaying(false); return; }
+    nt=i+1;
+  }
+  T=nt;render();requestAnimationFrame(frame);
+}
+
+/* ---------- Interface ---------- */
+let SEC='06';
+function buildSections(){
+  const n=$('sections');n.innerHTML='';
+  for(const [k,lab] of SECTIONS){const b=document.createElement('button');b.textContent=lab;b.className=k===SEC?'on':'';
+    b.onclick=()=>{const p=PLAYS.find(p=>p.sec===k);location.hash=p.id;};n.appendChild(b);}
+}
+function buildPlaysBar(){
+  const n=$('plays');n.innerHTML='';
+  for(const p of PLAYS.filter(p=>p.sec===SEC)){const b=document.createElement('button');b.textContent=p.name;b.className=p===PLAY?'on':'';
+    b.onclick=()=>{location.hash=p.id;};n.appendChild(b);}
+}
+function buildVariants(){
+  const n=$('variants');n.innerHTML='';
+  if(PLAY.variants.length<2) return;
+  PLAY.variants.forEach((v,k)=>{const b=document.createElement('button');b.textContent=v.n;b.className=k===VAR?'on':'';
+    b.onclick=()=>{VAR=k;loadVariant(true);};n.appendChild(b);});
+}
+function buildInfo(){
+  const secLab=SECTIONS.find(s=>s[0]===PLAY.sec)[1];
+  const rows=[['Mise en place',PLAY.mep],['Objectif',PLAY.obj],['Points clés',PLAY.cles],['Adaptation',PLAY.adapt],['Note',PLAY.note]].filter(r=>r[1]);
+  let h=`<h3>${PLAY.name} · ${secLab}</h3>`+rows.map(r=>`<div class="row"><div class="k">${r[0]}</div><div class="v">${r[1]}</div></div>`).join('');
+  h+=`<div class="row"><div class="k">Déroulé – ${PLAY.variants[VAR].n}</div><ul class="steps-list">`+
+     C.steps.map((s,k)=>`<li data-k="${k}"><b>${k===0?'MEP':k} · ${s.l}</b> — ${s.t}</li>`).join('')+'</ul></div>';
+  $('info').innerHTML=h;
+  $('info').querySelectorAll('li').forEach(li=>li.onclick=()=>{T=+li.dataset.k;holdUntil=0;render();setPlaying(true);});
+}
+function buildTimeline(){
+  const n=$('timeline');n.innerHTML='';
+  C.steps.forEach((s,k)=>{const b=document.createElement('button');b.className='seg';b.title=s.l;
+    b.innerHTML=`<i></i><b>${k===0?'MEP':k}</b>`;b.onclick=()=>{T=k;holdUntil=0;render();setPlaying(true);};n.appendChild(b);});
+}
+function loadVariant(autoplay){
+  C=compile(PLAY,PLAY.variants[VAR]);
+  T=0;holdUntil=0;
+  buildPlayers();buildVariants();buildInfo();buildTimeline();render();
+  if(autoplay) setPlaying(true);
+}
+function route(){
+  const id=location.hash.slice(1);
+  const p=PLAYS.find(p=>p.id===id)||PLAYS[0];
+  PLAY=p;SEC=p.sec;VAR=0;
+  $('ptitle').innerHTML=`${p.name}<small>${SECTIONS.find(s=>s[0]===p.sec)[1]}</small>`;
+  buildSections();buildPlaysBar();loadVariant(true);
+}
+$('bPlay').onclick=()=>{ if(!playing&&T>=C.steps.length) T=0; setPlaying(!playing); };
+$('bRestart').onclick=()=>{T=0;holdUntil=0;render();setPlaying(true);};
+$('bPrev').onclick=()=>{const i=Math.min(Math.floor(T),C.steps.length-1);const t=T-i;T=Math.max(0,(t<.15?i-1:i));holdUntil=0;render();setPlaying(true);};
+$('bNext').onclick=()=>{const i=Math.floor(T);if(i+1<C.steps.length){T=i+1;holdUntil=0;render();setPlaying(true);}};
+window.addEventListener('hashchange',route);
+drawField();route();
+</script>
+</body>
+</html>
