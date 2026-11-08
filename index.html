@@ -312,12 +312,12 @@ const PLAYS=[
  ]}]},
 /* ===== Infériorité -1 ===== */
 {id:'inf-poisson',sec:'inf',name:'Poisson',def:'d06',
- mep:'R2 d’un AR entre le 1 et le 2, l’ailier joue autour.',
+ mep:'Arrières écartés près de la ligne de touche pour étirer la défense. R2 d’un AR entre le 1 et le 2, l’ailier joue autour.',
  obj:'Jouer 2 contre 2 à l’extérieur, ou faire monter la défense et exploiter le couloir dans son dos dans la continuité.',
- variants:[{n:'Principal',init:{omit:['PVT'],ARG:[-5.8,10.2],DC:[0,11.4],ARD:[5.8,10.2],ball:'ARG'},steps:[
+ variants:[{n:'Principal',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[
     algRecoit(),
     {l:'R2 + l’ALG joue autour',t:'L’ARG rentre en R2 entre le 1 et le 2 ; l’ALG joue autour : 2 contre 2 à l’extérieur.',
-     a:[R('ARG',-6.1,4.3,0,.55,-6.6,8.0),D('ALG',-5.2,8.4,.35,.9,-8.0,7.0),M('g1',-7.4,5.0,.4,.9),R('DC',-2.0,10.8,.2,.8),R('ARD',2.6,10.6,.25,.85)]},
+     a:[R('ARG',-6.1,4.3,0,.55,-7.2,7.0),D('ALG',-5.2,8.4,.35,.9,-8.0,7.0),M('g1',-7.4,5.0,.4,.9),R('DC',-2.0,10.8,.2,.8),R('ARD',5.0,10.2,.25,.85)]},
     {l:'La défense monte',t:'Si la défense sort sur l’ALG, elle laisse un couloir dans son dos.',
      a:[M('g2',-4.6,7.4,0,.45),M('g3',-2.2,7.8,.05,.5),M('d3',1.2,7.6,.1,.55),M('d2',4.2,6.8,.15,.6)]},
     {l:'Couloir dans le dos',t:'Le joueur en R2 file le long des 6 m dans le dos de la défense et reçoit.',
