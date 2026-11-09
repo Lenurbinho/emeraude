@@ -379,8 +379,8 @@ const PLAYS=[
     {...algRecoit([R('PVT',-5.6,4.8,.35,.85,-4.0,6.9),M('g2',-4.3,5.6,.45,.9)]),t:'L’ALG monte et reçoit la balle ; à la réception, le PVT glisse entre le 2 et le 1.'},
     {l:'Chacun son espace',t:'Chacun attaque son espace sans chercher le duel.',
      a:[R('ARG',-3.6,9.2,0,.45),P('ALG','ARG',.3,.55),R('DC',1.6,9.4,.2,.6),P('ARG','DC',.6,.8),M('c3',0.8,7.4,.6,.9)]},
-    {l:'Joueur libre',t:'Le ballon va vite jusqu’au joueur libre (ici l’ALD).',
-     a:[R('ARD',4.8,9.2,0,.3),P('DC','ARD',.1,.35),M('d2',4.4,6.8,.25,.55),P('ARD','ALD',.45,.68),S('ALD',.74,.96,-1.0)]}
+    {l:'Joueur libre',t:'L’ARD court entre le 1 et le 2 ; le ballon va vite jusqu’au joueur libre (ici l’ALD).',
+     a:[R('ARD',5.8,6.8,0,.45,7.2,8.8),P('DC','ARD',.15,.42),M('d2',4.6,6.3,.25,.55),M('d1',6.8,4.2,.35,.6),R('ALD',7.8,2.3,.3,.65),P('ARD','ALD',.5,.7),S('ALD',.76,.96,-1.0)]}
  ]}]},
 {id:'sup-pizza-inv',sec:'sup',name:'Pizza inversé (Calzone)',def:'d05',mep:'PVT entre le 1 et le 2 à gauche (il y reste).',
  obj:'Le DC donne à l’ARD, qui vient un peu à l’intérieur, puis rentre entre le 2 et le 3 à droite. L’ARD passe à l’ARG qui court entre le 2 et le 3 ; l’ARG joue le joueur libre.',
@@ -396,14 +396,18 @@ const PLAYS=[
 /* ===== Infériorité -1 ===== */
 {id:'inf-poisson',sec:'inf',name:'Poisson',def:'d06',
  mep:'Arrières écartés près de la ligne de touche pour étirer la défense. Rentrée du DC en 2e pivot entre le 1 et le 2, l’ailier joue autour.',
- obj:'Jouer 2 contre 2 à l’extérieur, faire monter la défense à 9 m et libérer le pivot dans son dos.',
+ obj:'Jouer 2 contre 2 à l’extérieur, faire monter la défense à 9 m et libérer le pivot dans son dos. Sinon, le ballon va jusqu’à l’ALD et revient côté pivot pour créer le décalage.',
  variants:[
   {n:'Principal',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,
     {l:'Tir du PVT',t:'Le DC (pivot) reçoit dans le dos de la défense et tire.',a:[P('ARD','DC',0,.3),S('DC',.4,.7,0.6)]}
   ]},
-  {n:'Replacement',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,
-    {l:'Replacement',t:'Pas de passe possible : l’ARG se replace à l’extérieur gauche et l’ALG retourne au point de corner.',
-     a:[R('ARG',-7.7,9.4,0,.65,-5.0,11.2),R('ALG',-9.3,1.2,.1,.75,-8.6,6.6)]}
+  {n:'Continuité (ALD)',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,
+    {l:'Le ballon va jusqu’à l’ALD',t:'Pas de passe au pivot : le ballon va jusqu’à l’ALD. Pendant ce temps, l’ARG se replace à l’extérieur gauche et l’ALG retourne à son aile.',
+     a:[R('ALD',9.2,3.5,0,.4),P('ARD','ALD',.2,.5),R('ARD',5.8,10.0,.45,.85),M('d1',8.3,3.9,.3,.7),M('d2',5.0,5.6,.3,.75),M('d3',1.8,6.8,.35,.8),M('g3',-1.6,6.8,.35,.8),
+        R('ARG',-7.7,9.4,0,.75,-5.0,11.2),R('ALG',-9.3,1.2,.1,.8,-8.6,6.6)]},
+    {l:'Retour côté pivot : décalage',t:'Le ballon revient côté pivot : avec l’ARG à l’extérieur et l’ALG à son aile, on crée le décalage.',bl:['ARG'],
+     a:[P('ALD','ARD',0,.25),P('ARD','ARG',.32,.68),M('d1',7.4,3.2,.1,.5),M('g2',-6.4,7.0,.55,.9),M('g1',-7.8,4.2,.6,.95),R('ALG',-8.4,2.6,.6,.95)]},
+    {l:'Tir',t:'Selon la défense : tir de l’ARG, ou passe à l’ALG à l’aile.',a:[P('ARG','ALG',0,.3),S('ALG',.4,.7,0.9)]}
   ]}
  ]}
 ];
