@@ -204,6 +204,15 @@ function poissonSteps(o){
   return [t1,t2];
 }
 
+const INF_A=[
+  algRecoit([],null,['ARG','DC','ARD']),
+  {l:'R2 du DC – l’ALG joue autour',t:'Le DC rentre en 2e pivot entre le 1 et le 2 ; l’ALG joue autour : 2 contre 2 à l’extérieur.',bl:['ARG','DC','ARD'],
+   a:[R('DC',-6.1,4.3,0,.6,-4.6,8.4),D('ALG',-5.2,8.4,.35,.9,-8.0,7.0),M('g1',-7.4,5.0,.4,.9)]},
+  {l:'ARG entre les deux 3',t:'L’ARG court entre les deux 3 et reçoit. Les défenseurs n°3 et n°2 à l’opposé du PVT montent à 9 m.',
+   a:[R('ARG',-0.3,10.0,0,.55,-4.0,10.6),P('ALG','ARG',.35,.65),M('g3',-1.4,8.9,.4,.85),M('d3',1.3,8.9,.4,.85),M('d2',4.2,8.4,.45,.9)]},
+  {l:'ARD entre les 3, le PVT glisse',t:'L’ARD attaque entre les deux 3 montés à 9 m ; le PVT (DC) glisse dans le dos de tout le monde : passe possible.',
+   a:[R('ARG',-3.4,10.8,.1,.5),R('ARD',-0.2,10.3,.15,.75,4.6,10.9),P('ARG','ARD',.35,.65),R('DC',0.0,6.3,.3,.9,-2.8,6.9)]}
+];
 const SECTIONS=[['06','Sur 0-6'],['15','Sur 1-5'],['sup','Supériorité +1'],['inf','Infériorité −1']];
 const PLAYS=[
 /* ===== 0-6 ===== */
@@ -387,18 +396,16 @@ const PLAYS=[
 /* ===== Infériorité -1 ===== */
 {id:'inf-poisson',sec:'inf',name:'Poisson',def:'d06',
  mep:'Arrières écartés près de la ligne de touche pour étirer la défense. Rentrée du DC en 2e pivot entre le 1 et le 2, l’ailier joue autour.',
- obj:'Jouer 2 contre 2 à l’extérieur, faire aller le ballon jusqu’à l’ALD, puis faire monter la défense au retour pour libérer le pivot.',
- variants:[{n:'Principal',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[
-    algRecoit([],null,['ARG','DC','ARD']),
-    {l:'R2 du DC – l’ALG joue autour',t:'Le DC rentre en 2e pivot entre le 1 et le 2 ; l’ALG joue autour : 2 contre 2 à l’extérieur.',bl:['ARG','DC','ARD'],
-     a:[R('DC',-6.1,4.3,0,.6,-4.6,8.4),D('ALG',-5.2,8.4,.35,.9,-8.0,7.0),M('g1',-7.4,5.0,.4,.9)]},
-    {l:'Le ballon va jusqu’à l’ALD',t:'Le ballon circule jusqu’à l’ALD.',
-     a:[P('ALG','ARG',0,.22),P('ARG','ARD',.28,.58),R('ALD',9.2,3.5,.3,.6),P('ARD','ALD',.62,.85),M('d1',8.3,3.9,.6,.95),M('d2',5.2,5.3,.4,.8)]},
-    {l:'Retour : la défense monte',t:'Quand le ballon revient de l’ALD, on fait monter la défense : ça libère le pivot.',
-     a:[P('ALD','ARD',0,.25),P('ARD','ARG',.32,.62),M('g2',-4.6,7.3,.25,.65),M('g3',-2.2,7.8,.3,.7),M('d3',1.2,7.6,.3,.7),M('d2',4.2,6.8,.3,.7)]},
-    {l:'Pivot libéré',t:'Le DC file dans le couloir, dans le dos de la défense montée, reçoit et tire.',bl:['DC'],
-     a:[R('DC',-1.0,6.15,0,.55,-3.9,5.9),P('ARG','DC',.45,.72),S('DC',.8,.98,0.8)]}
- ]}]}
+ obj:'Jouer 2 contre 2 à l’extérieur, faire monter la défense à 9 m et libérer le pivot dans son dos.',
+ variants:[
+  {n:'Principal',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,
+    {l:'Tir du PVT',t:'Le DC (pivot) reçoit dans le dos de la défense et tire.',a:[P('ARD','DC',0,.3),S('DC',.4,.7,0.6)]}
+  ]},
+  {n:'Replacement',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,
+    {l:'Replacement',t:'Pas de passe possible : l’ARG se replace à l’extérieur gauche et l’ALG retourne au point de corner.',
+     a:[R('ARG',-7.7,9.4,0,.65,-5.0,11.2),R('ALG',-9.3,1.2,.1,.75,-8.6,6.6)]}
+  ]}
+ ]}
 ];
 
 /* ---------- Moteur ---------- */
