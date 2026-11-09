@@ -386,7 +386,8 @@ const PLAYS=[
 {id:'sup-pizza-inv',sec:'sup',name:'Pizza inversé (Calzone)',def:'d05',mep:'PVT entre le 1 et le 2 à gauche (il y reste).',
  obj:'Le DC donne à l’ARD, qui vient un peu à l’intérieur, puis rentre entre le 2 et le 3 à droite. L’ARD passe à l’ARG qui court entre le 2 et le 3 ; l’ARG joue le joueur libre.',
  variants:[{n:'Principal',init:{PVT:[-5.5,4.9],ball:'DC'},steps:[
-    {l:'DC → ARD',t:'Le DC donne à l’ARD, qui vient un petit peu à l’intérieur.',a:[P('DC','ARD',0,.4),R('ARD',5.0,9.2,.1,.6)]},
+    {l:'Échange tranquille DC / ARG',d:4.0,t:'Tranquillement : passe du DC à l’ARG, puis l’ARG redonne au DC.',a:[R('DC',-0.8,11.0,0,.4),P('DC','ARG',.15,.48),P('ARG','DC',.6,.88),R('DC',0.2,11.0,.7,1)]},
+    {l:'Temps fort – DC → ARD',t:'Le temps fort part sur la passe du DC à l’ARD, qui vient un petit peu à l’intérieur.',a:[P('DC','ARD',0,.3),R('ARD',5.0,9.2,.05,.5)]},
     {l:'Rentrée du DC',t:'Après avoir donné le ballon, le DC rentre entre le 2 et le 3 à droite. Le PVT reste entre le 1 et le 2 à gauche.',
      a:[R('DC',2.0,6.5,0,.6,1.6,9.4),M('d2',4.3,5.6,.3,.7)]},
     {l:'ARD → ARG entre 2 et 3',t:'L’ARD passe à l’ARG qui court entre le 2 et le 3.',
