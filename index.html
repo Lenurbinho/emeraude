@@ -69,6 +69,12 @@ summary{cursor:pointer;font:700 14px Inter}
 .gloss{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin-top:10px;font-size:13.5px;color:var(--ink2)}
 .gloss b{color:var(--ink)}
 .note{font-size:12.5px;color:var(--mute);margin-top:16px;line-height:1.5}
+.halo{opacity:0}
+.blink .halo{animation:blk .55s ease-in-out infinite alternate}
+@keyframes blk{from{opacity:.1}to{opacity:1}}
+.sidepick{display:flex;align-items:center;gap:6px;font:600 12.5px Inter;color:var(--mute)}
+.sidepick button{border:1.5px solid var(--line);background:#fff;font:600 12.5px Inter;padding:5px 10px;border-radius:8px;cursor:pointer;color:var(--ink2)}
+.sidepick button.on{border-color:var(--em);background:var(--em);color:#fff}
 .side{display:flex;flex-direction:column;gap:16px}
 </style>
 </head>
@@ -85,6 +91,7 @@ summary{cursor:pointer;font:700 14px Inter}
       <div class="court-head">
         <div class="court-title" id="ptitle"></div>
         <div class="variants" id="variants"></div>
+        <div class="sidepick">Départ :<button id="sideL">Côté gauche</button><button id="sideR">Côté droit</button></div>
       </div>
       <svg id="court" viewBox="-10.6 -1.5 21.2 14.4" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -130,6 +137,7 @@ summary{cursor:pointer;font:700 14px Inter}
             <div><svg width="44" height="14"><path d="M2 7 q4 -6 8 0 t8 0 t8 0 t8 0 t8 0" fill="none" stroke="#0e1412" stroke-width="2.2"/></svg> Dribble</div>
             <div><svg width="44" height="14"><line x1="2" y1="7" x2="40" y2="7" stroke="#0a6e4c" stroke-width="2.4" stroke-dasharray="5 4"/></svg> Passe</div>
             <div><svg width="44" height="14"><line x1="2" y1="7" x2="40" y2="7" stroke="#d8433b" stroke-width="3"/></svg> Tir</div>
+            <div style="grid-column:1/-1"><svg width="26" height="26" viewBox="-1.2 -1.2 2.4 2.4"><circle r="1.05" fill="none" stroke="#ffc928" stroke-width=".2"/><circle r=".7" fill="#0f9d6c"/></svg> Joueur qui clignote : solution / option à lire</div>
           </div>
         </div>
         <details>
@@ -148,7 +156,7 @@ summary{cursor:pointer;font:700 14px Inter}
           </div>
         </details>
       </div>
-      <p class="note">Animations construites à partir de la fiche du coach (croquis + annotations). Les positions et trajectoires sont indicatives : c’est le principe de chaque enclenchement qui compte. Exemples montrés côté gauche, à inverser côté droit.</p>
+      <p class="note">Animations construites à partir de la fiche du coach (croquis + annotations). Les positions et trajectoires sont indicatives : c’est le principe de chaque enclenchement qui compte. Le bouton « Départ » montre chaque enclenchement commencé côté gauche ou côté droit (miroir).</p>
     </div>
   </div>
 </main>
@@ -167,21 +175,34 @@ const M=(p,x,y,s,e)=>({k:'def',p,to:[x,y],s,e,via:null});
 const P=(p,to,s,e)=>({k:'pass',p,to,s,e});
 const S=(p,s,e,tx)=>({k:'shoot',p,s,e,tx});
 
-const algRecoit=(extra=[])=>({l:'Tps 1',t:'L’ALG monte et reçoit la balle à l’intersection 9 m / ligne de touche.',
-  a:[R('ALG',-9.2,3.5,0,.5),P('ARG','ALG',.35,.75),M('g1',-8.3,3.9,.3,.8),...extra]});
-const echanges=(txt,extra=[])=>({l:'Tps 1 – 2 échanges',t:txt,
-  a:[P('DC','ARG',0,.22),R('ARG',-7.0,9.6,.05,.4),P('ARG','DC',.32,.52),R('ARG',-6.4,10.6,.5,.72),P('DC','ARG',.62,.85),...extra]});
-function adaptV(d3,pvt,g2to,d3to,extraInit={}){
-  return {n:'Adaptation',init:{PVT:pvt,ball:'ARG',...extraInit},steps:[
+const algRecoit=(extra=[],t,bl)=>({l:'Tps 1',t:t||'L’ALG monte et reçoit la balle à l’intersection 9 m / ligne de touche.',
+  a:[R('ALG',-9.2,3.5,0,.5),P('ARG','ALG',.35,.75),M('g1',-8.3,3.9,.3,.8),...extra],bl});
+const PIV12_06=[R('PVT',-6.1,4.4,.35,.85,-5.2,6.9),M('g2',-5.1,5.2,.45,.9)];
+const PIV12_15=[R('PVT',-5.9,4.5,.35,.85,-4.6,6.9),M('g2',-4.6,5.5,.45,.9)];
+const RECEP_PIV='L’ALG monte et reçoit la balle à l’intersection 9 m / ligne de touche ; à la réception, le PVT glisse entre le 2 et le 1.';
+const redoub=(dcBack,argTo,extra=[])=>({l:'Redoublement – 1re passe lente',d:4.2,t:'Le DC donne lentement à l’ARG, fait une petite course vers l’arrière pour faire croire à un jeu simple, et l’ARG lui redonne.',
+  a:[P('DC','ARG',0,.42),R('ARG',argTo[0],argTo[1],.05,.42),R('DC',dcBack[0],dcBack[1],.38,.7),P('ARG','DC',.66,.92),...extra]});
+function adaptV(o){
+  return {n:'Adaptation',init:{PVT:o.pvt,ball:'ARG',...(o.init||{})},steps:[
     {l:'Le n°1 ferme',t:'Le n°1 adverse sort et interdit la passe vers l’ALG.',a:[R('ALG',-9.2,3.5,0,.5),M('g1',-8.4,4.9,.15,.6)]},
-    {l:'Dribble dans l’espace du PVT',t:'Le PVT glisse entre le 1 et le 2 ; l’ARG attaque en dribble l’espace laissé par le PVT.',
-      a:[R('PVT',-6.1,4.4,0,.5,-5.2,6.9),M('g2',g2to[0],g2to[1],.2,.6),D('ARG',-3.1,8.0,.2,.8,-4.8,9.6),M(d3,d3to[0],d3to[1],.5,.9)]},
-    {l:'Finition',t:'Tir de l’ARG, ou passe au PVT si le défenseur ferme.',a:[S('ARG',.1,.45,-0.6)]}
+    {l:'Dribble entre 2 et 3',t:'Le PVT glisse entre le 1 et le 2 ; l’ARG part en dribble entre le 2 et le 3 (comme sur l’enclenchement principal).',
+     a:[R('PVT',o.p12[0],o.p12[1],0,.5,o.via12[0],o.via12[1]),M('g2',o.g2to[0],o.g2to[1],.2,.6),D('ARG',o.arg[0],o.arg[1],.15,.75,o.arg[0]-1.5,9.3),
+        M(o.d3,o.d3to[0],o.d3to[1],.45,.85),R('DC',o.dc[0],o.dc[1],.3,.85)]},
+    {l:'Passe au DC',t:'L’ARG fixe et donne au DC, qui tire à 9 m.',a:[P('ARG','DC',0,.3),S('DC',.4,.7)],bl:['DC']}
   ]};
 }
+const ADAPT_06=adaptV({d3:'g3',pvt:[-3.1,6.1],p12:[-6.1,4.4],via12:[-5.2,6.9],g2to:[-5.1,5.2],arg:[-3.7,7.4],d3to:[-2.5,6.5],dc:[1.4,10.0]});
 const MEP_BBQ='PVT entre le 2 et le 3, côté de l’ailier qui a le ballon ; quand l’ailier reçoit, il glisse entre le 2 et le 1 (exemple côté gauche).';
-const ADAPT_TXT='Si le n°1 interdit la passe à l’ALG : l’ARG part en dribble dans l’espace du PVT, qui glisse entre le 1 et le 2.';
-const MEP_23='PVT entre le 1 et le 2, côté de l’ailier qui a le ballon ; il glisse ensuite entre le 2 et le 3 (exemple côté gauche).';
+const ADAPT_TXT='Si le n°1 interdit la passe à l’ALG : le PVT glisse entre le 1 et le 2, l’ARG part en dribble entre le 2 et le 3 (comme sur l’enclenchement principal), puis passe au DC.';
+const CLES_RED='Le redoublement déclenche le mouvement : 1re passe lente, temps fort sur la 2e passe du DC.';
+
+/* Poisson : étapes communes */
+function poissonSteps(o){
+  const t1=algRecoit([...o.piv12,...(o.t1x||[])],'L’ALG reçoit à l’intersection 9 m / touche ; à la réception, le PIV glisse entre le 2 et le 1. ARG, DC et ALD (qui clignotent) se tiennent prêts.',['ARG','DC','ALD']);
+  const t2={l:'Rentrée du DC – l’ALG joue autour',t:'Un joueur de la base arrière (ici le DC) rentre en 2e pivot entre le 3 et le 2, à l’opposé du ballon. L’ALG joue autour du PIV et revient en dribble entre le 2 et le 3. L’ARD reste sur la touche, prêt à courir entre le 1 et le 2 ; l’ARG est prêt à courir entre les deux 3.',
+    a:[R('DC',o.dcR2[0],o.dcR2[1],0,.6,o.dcR2[0]-0.6,9.2),...o.dcDef,D('ALG',o.algTo[0],o.algTo[1],.1,.75,-7.6,8.4),M('g1',-7.0,5.0,.3,.8)]};
+  return [t1,t2];
+}
 
 const SECTIONS=[['06','Sur 0-6'],['15','Sur 1-5'],['sup','Supériorité +1'],['inf','Infériorité −1']];
 const PLAYS=[
@@ -189,7 +210,7 @@ const PLAYS=[
 {id:'bbq-06',sec:'06',name:'BBQ',def:'d06',mep:MEP_BBQ,obj:'Duel sur le 3 bas isolé. Tir du DC à 9 m.',adapt:ADAPT_TXT,
  variants:[
   {n:'Principal',init:{PVT:[-3.1,6.1],ball:'ARG'},steps:[
-    {...algRecoit([R('PVT',-6.1,4.4,.35,.85,-5.2,6.9),M('g2',-5.1,5.2,.45,.9),R('ARG',-5.7,10.9,.6,.95)]),t:'L’ALG monte et reçoit la balle à l’intersection 9 m / ligne de touche ; à la réception, le PVT glisse entre le 2 et le 1.'},
+    algRecoit([...PIV12_06,R('ARG',-5.7,10.9,.6,.95)],RECEP_PIV),
     {l:'Tps 2',t:'L’ALG lance l’ARG fort entre le 2 et le 3 : duel sur le 3 bas, isolé.',
      a:[R('ARG',-3.7,7.4,.15,.7,-5.2,9.2),P('ALG','ARG',.45,.75),M('g3',-2.5,6.5,.5,.9)]},
     {l:'Selon le DC adverse',t:'Double duel, ou l’ARG aplatit : il fixe et lance le DC qui tire à 9 m.',
@@ -203,94 +224,146 @@ const PLAYS=[
     {l:'ARD entre les deux 3',t:'Quand l’ARD arrive entre les deux 3 : le PVT glisse entre le 2 et le 3, l’ARG part entre le 1 et le 2.',
      a:[R('PVT',-3.4,6.05,0,.5,-5.0,6.9),M('g2',-4.9,5.2,.15,.55),R('ARG',-6.2,7.3,.1,.65,-6.8,9.4),P('ARD','ARG',.5,.78),S('ARG',.82,.98,-0.5)]}
   ]},
-  adaptV('g3',[-3.1,6.1],[-4.4,5.9],[-2.4,7.1])
+  ADAPT_06
  ]},
 {id:'pierrick-06',sec:'06',name:'Pierrick',def:'d06',
- mep:'Croisé DC / AR à l’opposé du PVT + R2 de l’AR sur le PVT, qui glisse.',
+ mep:'Croisé DC / AR à l’opposé du PVT + R2 de l’AR sur le PVT ; le PVT glisse à l’opposé.',
  obj:'Créer du mouvement de joueurs à l’extérieur du dispositif puis à l’intérieur, pour venir fort central et exploiter l’extérieur.',
- variants:[{n:'Principal',init:{PVT:[-3.1,6.1],ball:'DC'},steps:[
+ cles:'Après le croisé, le DC file sur la touche droite puis court dans l’intervalle 1-2 : il écarte la défense et offre la solution de la continuité.',
+ variants:[
+  {n:'Principal',init:{PVT:[-3.1,6.1],ball:'DC'},steps:[
     {l:'Tps 1',t:'Croisé DC / ARD, tranquille.',a:[R('DC',3.4,10.2,0,.6),R('ARD',1.0,11.4,.15,.8,4.4,12.2),P('DC','ARD',.5,.75)]},
-    {l:'Tps 2',t:'L’ARD donne à l’ARG, qui reste « statique ».',a:[P('ARD','ARG',.05,.5),R('DC',6.0,10.4,0,.6)]},
+    {l:'Tps 2',t:'L’ARD donne à l’ARG, qui reste « statique ». Le DC file vers la ligne de touche droite.',a:[P('ARD','ARG',.05,.5),R('DC',8.7,9.3,0,.75,6.4,11.0)]},
     {l:'Tps 3',t:'À la réception de l’ARG : l’ARD fait R2 sur le PVT, et le PVT glisse à l’opposé, entre le 3 et le 2 de l’autre côté.',
      a:[R('PVT',3.2,6.15,0,.65,0.2,7.7),R('ARD',-3.1,6.1,.15,.75,-0.8,9.2),M('d3',1.4,6.8,.4,.8),M('d2',5.0,5.2,.4,.8)]},
-    {l:'Tps 4',t:'L’ARG part fort à l’intérieur en dribble.',
-     a:[D('ARG',-0.6,8.4,0,.55,-4.4,9.8),M('g3',-1.6,7.3,.3,.7),M('d3',0.9,7.3,.3,.7),S('ARG',.68,.92,0.2)]}
- ]}]},
+    {l:'Tps 4',t:'L’ARG part fort à l’intérieur en dribble et tire. En même temps, le DC court dans l’intervalle 1-2 pour écarter la défense et offrir une solution (→ continuité).',bl:['DC'],
+     a:[D('ARG',-0.6,8.4,0,.55,-4.4,9.8),R('DC',6.4,5.7,0,.55,8.6,7.6),M('d1',7.5,4.0,.3,.7),M('g3',-1.6,7.3,.3,.7),M('d3',0.9,7.3,.3,.7),S('ARG',.68,.92,0.2)]}
+  ]},
+  {n:'Continuité',init:{PVT:[3.2,6.15],ARD:[-3.1,6.1],DC:[8.7,9.3],ARG:[-3.6,9.4],d2:[5.0,5.2],d3:[1.4,6.8],ball:'ARG'},steps:[
+    {l:'ARG → DC entre 1 et 2',t:'Au lieu de tirer, l’ARG donne au DC qui court dans l’intervalle 1-2.',
+     a:[R('DC',6.4,5.7,0,.5,8.6,7.6),P('ARG','DC',.35,.65),M('d1',7.5,4.0,.3,.7),R('ARG',-6.2,10.2,.55,.95)]},
+    {l:'DC → ALD',t:'Le DC donne à l’ALD, qui monte recevoir à 9 m ; le DC ressort au poste d’ARD.',
+     a:[R('ALD',9.3,3.0,0,.4),P('DC','ALD',.3,.6),R('DC',6.2,10.2,.5,.95,7.6,8.6)]},
+    {l:'L’ALD reçoit',t:'À la réception de l’ALD : le PIV (ancien ARD) va entre le 1 et le 2 à gauche ; l’ALD lance le DC (au poste d’ARD) fort entre les deux 3.',
+     a:[R('ARD',-6.1,4.4,0,.5,-5.2,6.9),M('g2',-5.1,5.2,.2,.6),R('DC',0.5,8.6,.2,.75,4.0,9.4),P('ALD','DC',.45,.75),M('d3',1.0,7.3,.6,.95),M('g3',-1.0,7.0,.65,.95)]},
+    {l:'Idem continuité BBQ',t:'L’ancien ARD glisse entre le 2 et le 3, l’ARG court entre le 1 et le 2 et reçoit.',
+     a:[R('ARD',-3.4,6.05,0,.5,-5.0,6.9),M('g2',-4.9,5.2,.15,.55),R('ARG',-6.2,7.3,.1,.65,-6.8,9.4),P('DC','ARG',.5,.78),S('ARG',.82,.98,-0.5)]}
+  ]}
+ ]},
 {id:'pizza-06',sec:'06',name:'Pizza',def:'d06',
- mep:'R2 du DC sur le PVT après renversement ; le PVT glisse à l’opposé.',
+ mep:'ARG et ARD partent de la ligne de touche. R2 du DC sur le PVT après renversement ; le PVT glisse à l’opposé.',
  obj:'Créer du mouvement de joueurs à l’intérieur du dispositif pour venir fort central et exploiter l’extérieur.',
- cles:'Le redoublement déclenche le mouvement : 1re passe lente, temps fort sur la 2e passe du DC.',
- variants:[{n:'Principal',init:{PVT:[3.1,6.1],ball:'ARD'},steps:[
+ cles:CLES_RED,note:'Continuité : idem BBQ + Pierrick.',
+ variants:[
+  {n:'Principal',init:{PVT:[3.1,6.1],ARG:[-8.6,9.6],ARD:[8.6,9.6],ball:'ARD'},steps:[
     {l:'Renversement',t:'Le ballon revient au DC.',a:[P('ARD','DC',0,.45)]},
-    {l:'Redoublement – 1re passe lente',d:4.2,t:'Le DC donne lentement à l’ARG, fait une petite course vers l’arrière pour faire croire à un jeu simple, et l’ARG lui redonne.',
-     a:[P('DC','ARG',0,.42),R('ARG',-6.8,9.8,.05,.42),R('DC',0.2,12.2,.38,.7),P('ARG','DC',.66,.92)]},
+    redoub([0.2,12.2],[-8.1,9.0]),
     {l:'Temps fort – 2e passe du DC',t:'Sur sa 2e passe (rapide) vers l’ARG, le DC rentre en R2 sur le PVT ; le PVT glisse à l’opposé, entre le 3 et le 2.',
      a:[P('DC','ARG',0,.18),R('PVT',-3.2,6.1,.1,.6,0,9.2),R('DC',3.1,6.15,.25,.8,2.2,9.6),M('d3',1.4,6.8,.45,.85),M('g2',-5.0,5.2,.4,.8)]},
     {l:'Tps 2',t:'L’AR revient fort à l’intérieur.',
-     a:[D('ARG',-0.6,8.2,0,.6,-4.6,8.8),M('g3',-1.3,7.3,.3,.7),M('d3',0.9,7.2,.35,.75),S('ARG',.72,.95,0.3)]}
- ]}]},
-{id:'poisson-06',sec:'06',name:'Poisson',def:'d06',mep:MEP_23,obj:'Jouer autour, à l’extérieur.',adapt:ADAPT_TXT,
- variants:[
-  {n:'Principal',init:{PVT:[-6.1,4.4],ball:'ARG'},steps:[
-    algRecoit(),
-    {l:'Tps 2 – R2 de l’ARD',t:'L’ARD rentre en R2 entre le 3 et le 2.',
-     a:[R('ARD',3.2,6.15,0,.6,4.6,8.6),M('d3',1.4,6.8,.3,.7),M('d2',5.0,5.2,.3,.7),R('DC',-1.6,10.8,.2,.8)]},
-    {l:'Tps 2 – l’ALG joue autour',t:'L’ALG joue autour du PVT, qui glisse entre le 2 et le 3 pendant la course de l’ailier.',
-     a:[R('PVT',-3.4,6.05,0,.5,-5.0,6.9),M('g2',-4.9,5.2,.15,.55),D('ALG',-5.2,7.6,.1,.65,-7.8,7.4),M('g1',-7.0,5.0,.25,.75),S('ALG',.74,.96,-1.3)]}
+     a:[D('ARG',-0.6,8.2,0,.6,-5.0,8.8),M('g3',-1.3,7.3,.3,.7),M('d3',0.9,7.2,.35,.75),S('ARG',.72,.95,0.3)]}
   ]},
-  adaptV('g3',[-3.1,6.1],[-4.4,5.9],[-2.4,7.1])
+  {n:'Continuité',init:{PVT:[-3.2,6.1],DC:[3.1,6.15],ARG:[-8.6,9.6],ARD:[8.6,9.6],d3:[1.4,6.8],g2:[-5.0,5.2],ball:'ARD'},steps:[
+    {l:'L’ALD a la balle',t:'L’ALD monte et reçoit ; à la réception, le PIV gauche va entre le 1 et le 2.',
+     a:[R('ALD',9.2,3.5,0,.45),P('ARD','ALD',.3,.65),M('d1',8.3,3.9,.4,.85),R('PVT',-6.1,4.4,.45,.95,-5.4,7.0)]},
+    {l:'ARD fort entre les 3',t:'L’ALD lance l’ARD fort entre les deux 3.',
+     a:[R('ARD',0.4,8.6,0,.6,4.6,9.6),P('ALD','ARD',.35,.65),M('d3',1.0,7.3,.5,.9),M('g3',-1.0,7.0,.55,.9)]},
+    {l:'Idem continuité BBQ',t:'Le PIV glisse entre le 2 et le 3, l’ARG court entre le 1 et le 2 et reçoit.',
+     a:[R('PVT',-3.4,6.05,0,.5,-5.0,6.9),M('g2',-4.9,5.2,.15,.55),R('ARG',-6.2,7.3,.1,.65,-7.6,9.0),P('ARD','ARG',.5,.78),S('ARG',.82,.98,-0.5)]}
+  ]}
+ ]},
+{id:'poisson-06',sec:'06',name:'Poisson',def:'d06',
+ mep:'PIV entre le 2 et le 3 ; à la réception de l’ALG, il glisse entre le 1 et le 2. ARD sur la ligne de touche.',
+ obj:'Jouer autour, à l’extérieur.',adapt:'Idem BBQ. '+ADAPT_TXT,
+ note:'Continuité : si le ballon va jusqu’à l’ALD et qu’il ne tire pas, même continuité que Pierrick.',
+ variants:[
+  {n:'Principal',init:{PVT:[-3.1,6.1],ARD:[8.6,9.6],ball:'ARG'},steps:[
+    ...poissonSteps({piv12:PIV12_06,dcR2:[3.2,6.15],dcDef:[M('d3',1.4,6.8,.3,.7),M('d2',5.0,5.2,.3,.7)],algTo:[-3.8,7.6]}),
+    {l:'Tir ou passe au PIV',t:'L’ALG tire, ou passe au PIV (entre le 1 et le 2) si le 2 sort sur lui : tir du PIV.',bl:['PVT'],
+     a:[M('g2',-4.5,6.3,0,.4),P('ALG','PVT',.25,.55),S('PVT',.65,.9,-0.6)]}
+  ]},
+  {n:'Continuité',init:{PVT:[-3.1,6.1],ARD:[8.6,9.6],ball:'ARG'},steps:[
+    ...poissonSteps({piv12:PIV12_06,dcR2:[3.2,6.15],dcDef:[M('d3',1.4,6.8,.3,.7),M('d2',5.0,5.2,.3,.7)],algTo:[-3.8,7.6]}),
+    {l:'ALG → ARG entre les 3',t:'L’ALG donne à l’ARG qui court entre les deux 3 : il tire, ou donne au DC rentré, ou à l’ARD qui court entre le 1 et le 2.',bl:['ARG','DC','ARD'],
+     a:[R('ARG',-0.2,8.7,0,.55,-3.0,10.4),P('ALG','ARG',.4,.65),M('g3',-0.9,7.3,.5,.9)]},
+    {l:'ARD entre 1 et 2',t:'L’ARD, parti de la touche, court entre le 1 et le 2 et reçoit : il tire, ou donne à l’ALD.',bl:['ALD'],
+     a:[R('ARD',6.4,5.9,0,.5,8.4,7.8),P('ARG','ARD',.35,.65),M('d1',7.6,4.3,.4,.8)]},
+    {l:'L’ALD',t:'L’ALD tire. S’il ne tire pas : même continuité que Pierrick.',
+     a:[R('ALD',7.8,2.3,0,.4),P('ARD','ALD',.05,.4),S('ALD',.55,.85,-1.0)]}
+  ]},
+  ADAPT_06
  ]},
 /* ===== 1-5 ===== */
-{id:'bbq-15',sec:'15',name:'BBQ',def:'d15',mep:MEP_BBQ,obj:'Tir à 6 m central.',cles:'Action du 3 haut.',note:'Même continuité que sur 0-6.',adapt:ADAPT_TXT,
+{id:'bbq-15',sec:'15',name:'BBQ',def:'d15',mep:MEP_BBQ+' ARD sur la ligne de touche ; DC face à l’espace 2-3 à droite (face au poteau).',obj:'Tir à 6 m central.',cles:'Action du 3 haut.',note:'Même continuité que sur 0-6.',adapt:ADAPT_TXT,
  variants:[
-  {n:'Principal',init:{PVT:[-2.4,6.3],DC:[0,12.2],ball:'ARG'},steps:[
-    {...algRecoit([M('h3',-1.2,9.8,.3,.85),R('PVT',-5.9,4.5,.35,.85,-4.6,6.9),M('g2',-4.6,5.5,.45,.9)]),t:'L’ALG monte et reçoit la balle à l’intersection 9 m / ligne de touche ; à la réception, le PVT glisse entre le 2 et le 1.'},
+  {n:'Principal',init:{PVT:[-2.4,6.3],DC:[1.6,11.0],ARD:[8.6,9.6],ball:'ARG'},steps:[
+    algRecoit([M('h3',-1.2,9.8,.3,.85),...PIV12_15],RECEP_PIV),
     {l:'Tps 2',t:'L’ALG lance l’ARG fort entre le 2 et le 3 : duel sur le 3 bas, isolé.',
      a:[R('ARG',-3.0,7.5,.15,.7,-4.8,9.4),P('ALG','ARG',.45,.75),M('b3',-1.7,6.7,.5,.9),M('h3',-1.0,9.4,.55,.95)]},
     {l:'Point clé : le 3 haut',t:'Selon l’action du 3 haut : l’ARG gagne son duel sur le 3 bas isolé et tire à 6 m central.',
      a:[D('ARG',-0.2,7.0,0,.5,-1.2,7.9),M('b3',-2.2,7.0,.1,.5),S('ARG',.6,.85,0.5)]}
   ]},
-  {n:'Continuité',init:{PVT:[-5.9,4.5],DC:[0,12.2],ball:'DC'},steps:[
+  {n:'Continuité',init:{PVT:[-5.9,4.5],DC:[1.6,11.0],ARD:[8.6,9.6],ball:'DC'},steps:[
     {l:'L’ALD reçoit',t:'Le ballon part à droite : l’ALD monte et reçoit à l’intersection 9 m / touche.',
-     a:[P('DC','ARD',0,.3),R('ALD',9.2,3.5,.1,.55),P('ARD','ALD',.45,.8),M('d1',8.3,3.9,.4,.85),M('h3',2.0,9.8,.2,.8)]},
+     a:[P('DC','ARD',0,.3),R('ALD',9.2,3.5,.1,.55),P('ARD','ALD',.45,.8),M('d1',8.3,3.9,.4,.85),M('h3',3.0,9.8,.2,.8)]},
     {l:'R2 du DC',t:'Le DC rentre en R2 entre le 3 et le 2. L’ALD lance l’ARD à l’intérieur.',
-     a:[R('DC',1.6,6.45,0,.55,1.2,9.4),M('d2',3.9,5.7,.3,.7),R('ARD',-0.5,8.6,.25,.8,3.6,8.6),P('ALD','ARD',.5,.8),M('b3',-0.5,7.4,.6,.95),M('h3',0.4,9.6,.6,.95)]},
+     a:[R('DC',1.6,6.45,0,.55,1.4,9.0),M('d2',3.9,5.7,.3,.7),R('ARD',-0.5,8.6,.25,.8,3.6,8.6),P('ALD','ARD',.5,.8),M('b3',-0.5,7.4,.6,.95),M('h3',0.8,9.8,.6,.95)]},
     {l:'ARD au centre',t:'Quand l’ARD arrive au centre : le PVT glisse entre le 2 et le 3, l’ARG part entre le 1 et le 2.',
      a:[R('PVT',-3.0,6.1,0,.5,-4.6,6.9),M('g2',-4.6,5.5,.15,.55),R('ARG',-6.2,7.3,.1,.65,-6.8,9.4),P('ARD','ARG',.5,.78),S('ARG',.82,.98,-0.5)]}
   ]},
-  adaptV('b3',[-2.4,6.3],[-4.0,6.0],[-1.3,7.3],{DC:[0,12.2]})
+  adaptV({d3:'b3',pvt:[-2.4,6.3],p12:[-5.9,4.5],via12:[-4.6,6.9],g2to:[-4.6,5.5],arg:[-3.0,7.5],d3to:[-1.7,6.7],dc:[1.4,10.2],init:{DC:[1.6,11.0],ARD:[8.6,9.6]}})
  ]},
-{id:'pizza-15',sec:'15',name:'Pizza',def:'d15',mep:'R2 du DC sur le PVT après renversement ; le PVT glisse à l’opposé.',obj:'Tir à 6 m central, ou ailier grand angle.',cles:'Le redoublement déclenche le mouvement : 1re passe lente, temps fort sur la 2e passe du DC. Action du 3 haut.',
- variants:[{n:'Principal',init:{PVT:[1.5,6.4],DC:[0,11.6],ball:'ARD'},steps:[
+{id:'pizza-15',sec:'15',name:'Pizza',def:'d15',mep:'ARD sur la ligne de touche, prêt à courir entre le 1 et le 2. R2 du DC sur le PVT après renversement ; le PVT glisse à l’opposé.',obj:'Tir à 6 m central, ou ailier grand angle.',cles:CLES_RED+' Action du 3 haut.',note:'Continuité : idem BBQ sur 1-5.',
+ variants:[
+  {n:'Principal',init:{PVT:[1.5,6.4],DC:[0,11.6],ARD:[8.6,9.6],ball:'ARD'},steps:[
     {l:'Renversement',t:'Le ballon revient au DC.',a:[P('ARD','DC',0,.45)]},
-    {l:'Redoublement – 1re passe lente',d:4.2,t:'Le DC donne lentement à l’ARG, fait une petite course vers l’arrière pour faire croire à un jeu simple, et l’ARG lui redonne.',
-     a:[P('DC','ARG',0,.42),R('ARG',-6.8,9.8,.05,.42),R('DC',0.2,12.4,.38,.7),P('ARG','DC',.66,.92),M('h3',-1.0,9.8,.2,.8)]},
+    redoub([0.2,12.4],[-6.8,9.8],[M('h3',-1.0,9.8,.2,.8)]),
     {l:'Temps fort – 2e passe du DC',t:'Sur sa 2e passe (rapide) vers l’ARG, le DC rentre en R2 sur le PVT ; le PVT glisse à l’opposé, entre le 2 et le 3.',
      a:[P('DC','ARG',0,.18),R('PVT',-2.3,6.3,.1,.6,-0.4,9.0),R('DC',1.5,6.4,.25,.8,1.0,9.4),M('d2',3.9,5.7,.4,.8)]},
-    {l:'Tps 2',t:'L’AR revient fort interne. Selon le 3 haut : passe au DC pour le tir à 6 m central (ou ailier grand angle).',
-     a:[D('ARG',-1.6,8.8,0,.5,-4.8,9.4),M('b3',-1.0,7.6,.3,.65),M('h3',-0.6,9.9,.25,.6),P('ARG','DC',.55,.75),S('DC',.8,.98,-0.5)]}
- ]}]},
-{id:'poisson-15',sec:'15',name:'Poisson',def:'d15',mep:MEP_23,obj:'Jouer autour, à l’extérieur.',adapt:ADAPT_TXT,
- variants:[
-  {n:'Principal',init:{PVT:[-5.9,4.5],DC:[0,12.2],ball:'ARG'},steps:[
-    algRecoit([M('h3',-1.2,9.8,.3,.85)]),
-    {l:'Tps 2 – R2 de l’ARD',t:'L’ARD rentre en R2 entre le 3 et le 2.',
-     a:[R('ARD',1.6,6.45,0,.6,3.4,9.0),M('d2',3.9,5.7,.3,.7),R('DC',-1.8,11.2,.2,.8)]},
-    {l:'Tps 2 – l’ALG joue autour',t:'L’ALG joue autour du PVT, qui glisse entre le 2 et le 3 pendant la course de l’ailier.',
-     a:[R('PVT',-3.0,6.1,0,.5,-4.6,6.9),M('g2',-4.6,5.5,.15,.55),D('ALG',-5.0,7.8,.1,.65,-7.6,7.4),M('g1',-6.9,5.0,.25,.75),M('h3',-2.4,9.8,.3,.7),S('ALG',.74,.96,-1.3)]}
+    {l:'Tps 2',t:'L’AR revient fort interne ; l’ARD part de la touche entre le 1 et le 2. Selon le 3 haut : passe au DC pour le tir à 6 m central (ou ARD / ailier grand angle).',bl:['DC','ARD'],
+     a:[D('ARG',-1.6,8.8,0,.5,-4.8,9.4),R('ARD',5.9,5.6,.1,.6,8.0,7.6),M('b3',-1.0,7.6,.3,.65),M('h3',-0.6,9.9,.25,.6),P('ARG','DC',.55,.75),S('DC',.8,.98,-0.5)]}
   ]},
-  adaptV('b3',[-2.4,6.3],[-4.0,6.0],[-1.3,7.3],{DC:[0,12.2]})
+  {n:'Continuité',init:{PVT:[-2.3,6.3],DC:[1.5,6.4],ARD:[8.6,9.6],d2:[3.9,5.7],ball:'ARD'},steps:[
+    {l:'L’ALD a la balle',t:'L’ALD monte et reçoit ; à la réception, le PIV gauche va entre le 1 et le 2.',
+     a:[R('ALD',9.2,3.5,0,.45),P('ARD','ALD',.3,.65),M('d1',8.3,3.9,.4,.85),R('PVT',-5.9,4.5,.45,.95,-4.6,6.9),M('h3',1.4,9.8,.2,.8)]},
+    {l:'ARD fort au centre',t:'L’ALD lance l’ARD fort au centre.',
+     a:[R('ARD',-0.5,8.6,0,.6,3.6,8.6),P('ALD','ARD',.35,.65),M('b3',-0.5,7.4,.5,.9),M('h3',0.8,9.9,.5,.9)]},
+    {l:'Idem continuité BBQ',t:'Le PIV glisse entre le 2 et le 3, l’ARG court entre le 1 et le 2 et reçoit.',
+     a:[R('PVT',-3.0,6.1,0,.5,-4.6,6.9),M('g2',-4.6,5.5,.15,.55),R('ARG',-6.2,7.3,.1,.65,-6.8,9.4),P('ARD','ARG',.5,.78),S('ARG',.82,.98,-0.5)]}
+  ]}
+ ]},
+{id:'poisson-15',sec:'15',name:'Poisson',def:'d15',
+ mep:'Idem 0-6 : PIV entre le 2 et le 3 ; à la réception de l’ALG, il glisse entre le 1 et le 2. ARD sur la ligne de touche.',
+ obj:'Jouer autour, à l’extérieur.',cles:'Sur 1-5, c’est le 3 haut (au lieu du 3 bas) qui est concerné en défense.',adapt:'Idem BBQ. '+ADAPT_TXT,
+ note:'Continuité : si le ballon va jusqu’à l’ALD et qu’il ne tire pas, même continuité que Pierrick.',
+ variants:[
+  {n:'Principal',init:{PVT:[-2.4,6.3],DC:[0,11.6],ARD:[8.6,9.6],ball:'ARG'},steps:[
+    ...poissonSteps({piv12:PIV12_15,t1x:[M('h3',-1.2,9.8,.3,.85)],dcR2:[1.6,6.45],dcDef:[M('d2',3.9,5.7,.3,.7)],algTo:[-3.0,7.6]}),
+    {l:'Tir ou passe au PIV',t:'L’ALG tire, ou passe au PIV (entre le 1 et le 2) si le 3 haut sort sur lui : tir du PIV.',bl:['PVT'],
+     a:[M('h3',-2.5,8.8,0,.4),P('ALG','PVT',.25,.55),S('PVT',.65,.9,-0.6)]}
+  ]},
+  {n:'Continuité',init:{PVT:[-2.4,6.3],DC:[0,11.6],ARD:[8.6,9.6],ball:'ARG'},steps:[
+    ...poissonSteps({piv12:PIV12_15,t1x:[M('h3',-1.2,9.8,.3,.85)],dcR2:[1.6,6.45],dcDef:[M('d2',3.9,5.7,.3,.7)],algTo:[-3.0,7.6]}),
+    {l:'ALG → ARG au centre',t:'L’ALG donne à l’ARG qui court au centre : il tire, ou donne au DC rentré, ou à l’ARD qui court entre le 1 et le 2.',bl:['ARG','DC','ARD'],
+     a:[R('ARG',0.0,8.6,0,.55,-3.0,10.6),P('ALG','ARG',.4,.65),M('h3',-1.4,9.4,.3,.7),M('b3',-0.3,7.5,.5,.9)]},
+    {l:'ARD entre 1 et 2',t:'L’ARD, parti de la touche, court entre le 1 et le 2 et reçoit : il tire, ou donne à l’ALD.',bl:['ALD'],
+     a:[R('ARD',5.9,5.6,0,.5,8.0,7.6),P('ARG','ARD',.35,.65),M('d1',7.6,4.3,.4,.8)]},
+    {l:'L’ALD',t:'L’ALD tire. S’il ne tire pas : même continuité que Pierrick.',
+     a:[R('ALD',7.8,2.3,0,.4),P('ARD','ALD',.05,.4),S('ALD',.55,.85,-1.0)]}
+  ]},
+  adaptV({d3:'b3',pvt:[-2.4,6.3],p12:[-5.9,4.5],via12:[-4.6,6.9],g2to:[-4.6,5.5],arg:[-3.0,7.5],d3to:[-1.7,6.7],dc:[1.4,10.2],init:{DC:[0,11.6],ARD:[8.6,9.6]}})
  ]},
 /* ===== Supériorité +1 ===== */
-{id:'sup-pizza',sec:'sup',name:'Pizza',def:'d05',mep:'PVT entre le 1 et le 2 ; R2 du DC sur le PVT, qui glisse à l’opposé.',obj:'Fixer avec le PVT et le R2, puis venir fort au centre.',cles:'Le redoublement déclenche le mouvement : 1re passe lente, temps fort sur la 2e passe du DC.',
- variants:[{n:'Principal',init:{PVT:[-5.5,4.9],ball:'ARD'},steps:[
+{id:'sup-pizza',sec:'sup',name:'Pizza',def:'d05',mep:'PVT entre le 1 et le 2 (il y reste). DC face à l’espace 2-3, ARD sur la ligne de touche.',obj:'Chacun prend son intervalle, jusqu’à l’aile pour un tir à 6 m.',cles:CLES_RED,
+ variants:[{n:'Principal',init:{PVT:[-5.5,4.9],DC:[2.0,11.0],ARD:[8.6,9.6],ball:'ARD'},steps:[
     {l:'Renversement',t:'Le ballon revient au DC.',a:[P('ARD','DC',0,.45)]},
-    {l:'Redoublement – 1re passe lente',d:4.2,t:'Le DC donne lentement à l’ARG, fait une petite course vers l’arrière pour faire croire à un jeu simple, et l’ARG lui redonne.',
-     a:[P('DC','ARG',0,.42),R('ARG',-6.8,9.8,.05,.42),R('DC',0.2,12.2,.38,.7),P('ARG','DC',.66,.92)]},
-    {l:'Temps fort – 2e passe du DC',t:'Sur sa 2e passe (rapide) vers l’ARG, le DC rentre en R2 sur le PVT (entre le 1 et le 2) ; le PVT glisse à l’opposé, entre le 3 et le 2.',
-     a:[P('DC','ARG',0,.18),R('PVT',2.1,6.35,.1,.6,-1.5,10.2),R('DC',-5.4,5.0,.3,.85,-3.6,9.0),M('d2',4.3,5.6,.4,.8)]},
-    {l:'ARG fort interne',t:'L’ARG revient fort à l’intérieur, entre le 2 et le 3.',
-     a:[D('ARG',-1.9,8.2,0,.6,-4.8,8.8),M('c3',-0.6,7.6,.3,.7),S('ARG',.72,.95,-1.1)]}
+    redoub([2.2,12.2],[-6.8,9.8]),
+    {l:'Temps fort – 2e passe du DC',t:'Sur sa 2e passe (rapide) vers l’ARG, le DC rentre entre le 2 et le 3 à droite. Le PVT reste entre le 1 et le 2.',
+     a:[P('DC','ARG',0,.18),R('DC',2.0,6.5,.15,.7,2.4,9.4),M('d2',4.3,5.6,.4,.8)]},
+    {l:'ARG fort interne',t:'L’ARG revient fort à l’intérieur et donne au joueur libre, selon la défense. Chacun attaque son intervalle.',bl:['PVT','DC','ARD'],
+     a:[D('ARG',-2.0,8.3,0,.5,-4.8,8.8),M('c3',-0.7,7.5,.25,.6),R('ARD',5.9,7.0,.3,.8,8.2,8.4),P('ARG','ARD',.6,.85)]},
+    {l:'Jusqu’à l’aile',t:'Le ballon va d’intervalle en intervalle jusqu’à l’aile : tir à 6 m.',
+     a:[M('d1',6.6,4.6,0,.35),R('ALD',7.8,2.3,0,.4),P('ARD','ALD',.25,.5),S('ALD',.6,.85,-1.0)]}
  ]}]},
 {id:'sup-bbq',sec:'sup',name:'BBQ',def:'d05',mep:'PVT entre le 2 et le 3 côté ailier ; quand l’ailier reçoit, il glisse entre le 2 et le 1.',obj:'Sans duel : chacun son espace, le ballon circule jusqu’au joueur libre.',
  variants:[{n:'Principal',init:{PVT:[-2.0,6.4],ball:'ARG'},steps:[
@@ -300,28 +373,31 @@ const PLAYS=[
     {l:'Joueur libre',t:'Le ballon va vite jusqu’au joueur libre (ici l’ALD).',
      a:[R('ARD',4.8,9.2,0,.3),P('DC','ARD',.1,.35),M('d2',4.4,6.8,.25,.55),P('ARD','ALD',.45,.68),S('ALD',.74,.96,-1.0)]}
  ]}]},
-{id:'sup-pizza-inv',sec:'sup',name:'Pizza inversé (Calzone)',def:'d05',mep:'PVT entre le 1 et le 2.',
- obj:'Après le redoublement avec l’ARG, le DC donne à l’AR à l’opposé du PVT et rentre en R2 entre le 1 et le 2 ; le PVT glisse à l’opposé. L’ARG part entre le 2 et le 3.',cles:'Le redoublement déclenche le mouvement : 1re passe lente, temps fort sur la 2e passe du DC.',
+{id:'sup-pizza-inv',sec:'sup',name:'Pizza inversé (Calzone)',def:'d05',mep:'PVT entre le 1 et le 2 à gauche (il y reste).',
+ obj:'Le DC donne à l’ARD, qui vient un peu à l’intérieur, puis rentre entre le 2 et le 3 à droite. L’ARD passe à l’ARG qui court entre le 2 et le 3 ; l’ARG joue le joueur libre.',
  variants:[{n:'Principal',init:{PVT:[-5.5,4.9],ball:'DC'},steps:[
-    {l:'Redoublement – 1re passe lente',d:4.2,t:'Le DC donne lentement à l’ARG, fait une petite course vers l’arrière pour faire croire à un jeu simple, et l’ARG lui redonne.',
-     a:[P('DC','ARG',0,.42),R('ARG',-6.8,9.8,.05,.42),R('DC',0.2,12.2,.38,.7),P('ARG','DC',.66,.92)]},
-    {l:'Temps fort – 2e passe du DC',t:'Sur sa 2e passe (rapide), le DC donne à l’ARD et rentre en R2 entre le 1 et le 2 ; le PVT glisse à l’opposé, entre le 2 et le 1.',
-     a:[R('ARD',5.4,9.6,0,.2),P('DC','ARD',0,.2),R('PVT',5.6,4.8,.1,.65,0,10.4),R('DC',-5.4,5.0,.3,.85,-3.6,9.0),M('d2',3.7,6.0,.45,.85),M('d1',7.4,3.0,.45,.85)]},
-    {l:'ARG entre 2 et 3',t:'L’ARG part entre le 2 et le 3 et reçoit.',
-     a:[R('ARG',-2.2,8.0,0,.55,-4.8,9.6),P('ARD','ARG',.35,.7),M('c3',-0.6,7.4,.5,.85),S('ARG',.75,.95,-1.0)]}
+    {l:'DC → ARD',t:'Le DC donne à l’ARD, qui vient un petit peu à l’intérieur.',a:[P('DC','ARD',0,.4),R('ARD',5.0,9.2,.1,.6)]},
+    {l:'Rentrée du DC',t:'Après avoir donné le ballon, le DC rentre entre le 2 et le 3 à droite. Le PVT reste entre le 1 et le 2 à gauche.',
+     a:[R('DC',2.0,6.5,0,.6,1.6,9.4),M('d2',4.3,5.6,.3,.7)]},
+    {l:'ARD → ARG entre 2 et 3',t:'L’ARD passe à l’ARG qui court entre le 2 et le 3.',
+     a:[R('ARG',-2.2,8.0,0,.55,-4.8,9.6),P('ARD','ARG',.35,.7),M('c3',-0.6,7.4,.5,.85)]},
+    {l:'L’ARG choisit',t:'L’ARG choisit le joueur libre selon le mouvement défensif (PVT, DC…), puis tir.',bl:['PVT','DC'],
+     a:[S('ARG',.3,.6,-1.0)]}
  ]}]},
 /* ===== Infériorité -1 ===== */
 {id:'inf-poisson',sec:'inf',name:'Poisson',def:'d06',
- mep:'Arrières écartés près de la ligne de touche pour étirer la défense. R2 d’un AR entre le 1 et le 2, l’ailier joue autour.',
- obj:'Jouer 2 contre 2 à l’extérieur, ou faire monter la défense et exploiter le couloir dans son dos dans la continuité.',
+ mep:'Arrières écartés près de la ligne de touche pour étirer la défense. Rentrée du DC en 2e pivot entre le 1 et le 2, l’ailier joue autour.',
+ obj:'Jouer 2 contre 2 à l’extérieur, faire aller le ballon jusqu’à l’ALD, puis faire monter la défense au retour pour libérer le pivot.',
  variants:[{n:'Principal',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[
-    algRecoit(),
-    {l:'R2 + l’ALG joue autour',t:'L’ARG rentre en R2 entre le 1 et le 2 ; l’ALG joue autour : 2 contre 2 à l’extérieur.',
-     a:[R('ARG',-6.1,4.3,0,.55,-7.2,7.0),D('ALG',-5.2,8.4,.35,.9,-8.0,7.0),M('g1',-7.4,5.0,.4,.9),R('DC',-2.0,10.8,.2,.8),R('ARD',5.0,10.2,.25,.85)]},
-    {l:'La défense monte',t:'Si la défense sort sur l’ALG, elle laisse un couloir dans son dos.',
-     a:[M('g2',-4.6,7.4,0,.45),M('g3',-2.2,7.8,.05,.5),M('d3',1.2,7.6,.1,.55),M('d2',4.2,6.8,.15,.6)]},
-    {l:'Couloir dans le dos',t:'Le joueur en R2 file le long des 6 m dans le dos de la défense et reçoit.',
-     a:[R('ARG',-0.6,6.15,0,.6,-3.9,5.9),P('ALG','ARG',.45,.75),S('ARG',.8,.98,0.8)]}
+    algRecoit([],null,['ARG','DC','ARD']),
+    {l:'R2 du DC – l’ALG joue autour',t:'Le DC rentre en 2e pivot entre le 1 et le 2 ; l’ALG joue autour : 2 contre 2 à l’extérieur.',bl:['ARG','DC','ARD'],
+     a:[R('DC',-6.1,4.3,0,.6,-4.6,8.4),D('ALG',-5.2,8.4,.35,.9,-8.0,7.0),M('g1',-7.4,5.0,.4,.9)]},
+    {l:'Le ballon va jusqu’à l’ALD',t:'Le ballon circule jusqu’à l’ALD.',
+     a:[P('ALG','ARG',0,.22),P('ARG','ARD',.28,.58),R('ALD',9.2,3.5,.3,.6),P('ARD','ALD',.62,.85),M('d1',8.3,3.9,.6,.95),M('d2',5.2,5.3,.4,.8)]},
+    {l:'Retour : la défense monte',t:'Quand le ballon revient de l’ALD, on fait monter la défense : ça libère le pivot.',
+     a:[P('ALD','ARD',0,.25),P('ARD','ARG',.32,.62),M('g2',-4.6,7.3,.25,.65),M('g3',-2.2,7.8,.3,.7),M('d3',1.2,7.6,.3,.7),M('d2',4.2,6.8,.3,.7)]},
+    {l:'Pivot libéré',t:'Le DC file dans le couloir, dans le dos de la défense montée, reçoit et tire.',bl:['DC'],
+     a:[R('DC',-1.0,6.15,0,.55,-3.9,5.9),P('ARG','DC',.45,.72),S('DC',.8,.98,0.8)]}
  ]}]}
 ];
 
@@ -331,13 +407,22 @@ const lerp=(a,b,u)=>[a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u];
 const OFF=[.42,-.4];
 const isMove=a=>a.k==='run'||a.k==='drib'||a.k==='def';
 
+let MIRROR=false;
+const MX=p=>MIRROR?[-p[0],p[1]]:p.slice();
+const SWAP={ALG:'ALD',ALD:'ALG',ARG:'ARD',ARD:'ARG'};
+const lab=id=>MIRROR&&SWAP[id]?SWAP[id]:id;
+function TX(s){
+  if(!MIRROR||!s) return s;
+  const m={'côté gauche':'côté droit','côté droit':'côté gauche',ALG:'ALD',ALD:'ALG',ARG:'ARD',ARD:'ARG',gauche:'droite',droite:'gauche'};
+  return s.replace(/côté gauche|côté droit|\b(?:ALG|ALD|ARG|ARD)\b|gauche|droite/g,x=>m[x]);
+}
 function compile(play,v){
   const ents={};
-  for(const [id,[lab,x,y]] of Object.entries(DEFS[play.def])) ents[id]={type:'d',label:lab,p:[x,y]};
   const init=v.init||{};
+  for(const [id,[lb,x,y]] of Object.entries(DEFS[play.def])) ents[id]={type:'d',label:lb,p:MX(init[id]||[x,y])};
   for(const id of Object.keys(ATT_BASE)){
     if(init.omit&&init.omit.includes(id)) continue;
-    ents[id]={type:'a',label:id,p:(init[id]||ATT_BASE[id]).slice()};
+    ents[id]={type:'a',label:lab(id),p:MX(init[id]||ATT_BASE[id])};
   }
   const raw=[{l:'Mise en place',t:play.mep,a:[]},...v.steps];
   let pos={};for(const id in ents) pos[id]=ents[id].p.slice();
@@ -345,12 +430,12 @@ function compile(play,v){
   const steps=[];
   for(const st of raw){
     const start={pos:JSON.parse(JSON.stringify(pos)),holder};
-    const acts=st.a.map(a=>({...a})).sort((x,y)=>x.s-y.s);
+    const acts=st.a.map(a=>{const b={...a};if(Array.isArray(a.to))b.to=MX(a.to);if(a.via)b.via=MX(a.via);if(a.tx!=null&&MIRROR)b.tx=-a.tx;return b;}).sort((x,y)=>x.s-y.s);
     const cur=JSON.parse(JSON.stringify(pos));
     for(const a of acts){ if(isMove(a)){ a.p0=cur[a.p].slice(); cur[a.p]=a.to.slice(); } }
     let h=holder;
     for(const a of acts){ if(a.k==='pass') h=a.to; if(a.k==='shoot') h=null; }
-    steps.push({l:st.l,t:st.t,acts,start,dur:st.d||(acts.length?3.2:1.8)});
+    steps.push({l:TX(st.l),t:TX(st.t),bl:st.bl||[],acts,start,dur:st.d||(acts.length?3.2:1.8)});
     pos=cur; holder=h;
   }
   return {ents,steps};
@@ -423,6 +508,7 @@ function buildPlayers(){
   for(const id of order.reverse()){
     const e=C.ents[id];const pg=el('g',{},g);
     if(e.type==='a'){
+      el('circle',{r:1.0,class:'halo',fill:'none',stroke:'#ffc928',"stroke-width":.18},pg);
       el('circle',{r:.62,fill:'#0f9d6c',stroke:'#fff',"stroke-width":.09},pg);
       const tx=el('text',{y:.14,"text-anchor":'middle',"font-size":e.label.length>2?.36:.42,fill:'#fff',"font-family":'Inter',"font-weight":700},pg);tx.textContent=e.label;
     }else{
@@ -482,7 +568,7 @@ function render(){
   const N=C.steps.length;
   const i=Math.min(Math.floor(T),N-1);const t=T>=N?1:T-i;
   const st=C.steps[i];
-  for(const id in C.ents){const p=posAt(st,id,t);playerEls[id].setAttribute('transform',`translate(${p[0]},${p[1]})`);}
+  for(const id in C.ents){const p=posAt(st,id,t);playerEls[id].setAttribute('transform',`translate(${p[0]},${p[1]})`);playerEls[id].classList.toggle('blink',st.bl.includes(id));}
   const b=ballAt(st,t);const ball=$('ball');
   if(b){ball.style.display='';ball.setAttribute('cx',b.p[0]);ball.setAttribute('cy',b.p[1]);}else ball.style.display='none';
   const bx=b?b.p[0]:0;playerEls.GB.setAttribute('transform',`translate(${Math.max(-1.1,Math.min(1.1,bx*.14))},0.95)`);
@@ -520,12 +606,12 @@ let SEC='06';
 function buildSections(){
   const n=$('sections');n.innerHTML='';
   for(const [k,lab] of SECTIONS){const b=document.createElement('button');b.textContent=lab;b.className=k===SEC?'on':'';
-    b.onclick=()=>{const p=PLAYS.find(p=>p.sec===k);location.hash=p.id;};n.appendChild(b);}
+    b.onclick=()=>{const p=PLAYS.find(p=>p.sec===k);location.hash=p.id+(MIRROR?'-miroir':'');};n.appendChild(b);}
 }
 function buildPlaysBar(){
   const n=$('plays');n.innerHTML='';
   for(const p of PLAYS.filter(p=>p.sec===SEC)){const b=document.createElement('button');b.textContent=p.name;b.className=p===PLAY?'on':'';
-    b.onclick=()=>{location.hash=p.id;};n.appendChild(b);}
+    b.onclick=()=>{location.hash=p.id+(MIRROR?'-miroir':'');};n.appendChild(b);}
 }
 function buildVariants(){
   const n=$('variants');n.innerHTML='';
@@ -535,8 +621,8 @@ function buildVariants(){
 }
 function buildInfo(){
   const secLab=SECTIONS.find(s=>s[0]===PLAY.sec)[1];
-  const rows=[['Mise en place',PLAY.mep],['Objectif',PLAY.obj],['Points clés',PLAY.cles],['Adaptation',PLAY.adapt],['Note',PLAY.note]].filter(r=>r[1]);
-  let h=`<h3>${PLAY.name} · ${secLab}</h3>`+rows.map(r=>`<div class="row"><div class="k">${r[0]}</div><div class="v">${r[1]}</div></div>`).join('');
+  const rows=[['Mise en place',PLAY.mep],['Objectif',PLAY.obj],['Points clés',PLAY.cles],['Adaptation',PLAY.adapt],['Note',PLAY.note]].filter(r=>r[1]).map(r=>[r[0],TX(r[1])]);
+  let h=`<h3>${PLAY.name} · ${secLab}${MIRROR?' · départ côté droit':''}</h3>`+rows.map(r=>`<div class="row"><div class="k">${r[0]}</div><div class="v">${r[1]}</div></div>`).join('');
   h+=`<div class="row"><div class="k">Déroulé – ${PLAY.variants[VAR].n}</div><ul class="steps-list">`+
      C.steps.map((s,k)=>`<li data-k="${k}"><b>${k===0?'MEP':k} · ${s.l}</b> — ${s.t}</li>`).join('')+'</ul></div>';
   $('info').innerHTML=h;
@@ -553,8 +639,14 @@ function loadVariant(autoplay){
   buildPlayers();buildVariants();buildInfo();buildTimeline();render();
   if(autoplay) setPlaying(true);
 }
+let skipRoute=false;
+function setSide(m){
+  MIRROR=m;$('sideL').className=m?'':'on';$('sideR').className=m?'on':'';
+}
 function route(){
-  const id=location.hash.slice(1);
+  if(skipRoute){skipRoute=false;return;}
+  let id=location.hash.slice(1);
+  setSide(id.endsWith('-miroir'));id=id.replace(/-miroir$/,'');
   const p=PLAYS.find(p=>p.id===id)||PLAYS[0];
   PLAY=p;SEC=p.sec;VAR=0;
   $('ptitle').innerHTML=`${p.name}<small>${SECTIONS.find(s=>s[0]===p.sec)[1]}</small>`;
@@ -565,6 +657,8 @@ $('bRestart').onclick=()=>{T=0;holdUntil=0;render();setPlaying(true);};
 $('bPrev').onclick=()=>{const i=Math.min(Math.floor(T),C.steps.length-1);const t=T-i;T=Math.max(0,(t<.15?i-1:i));holdUntil=0;render();setPlaying(true);};
 $('bNext').onclick=()=>{const i=Math.floor(T);if(i+1<C.steps.length){T=i+1;holdUntil=0;render();setPlaying(true);}};
 window.addEventListener('hashchange',route);
+function toggleSide(m){ if(m===MIRROR) return; setSide(m); skipRoute=true; location.hash=PLAY.id+(m?'-miroir':''); loadVariant(true); }
+$('sideL').onclick=()=>toggleSide(false);$('sideR').onclick=()=>toggleSide(true);
 drawField();route();
 </script>
 </body>
