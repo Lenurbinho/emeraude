@@ -403,9 +403,12 @@ const PLAYS=[
   {n:'Passe de l’ARD',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,
     {l:'Passe au pivot',t:'L’ARD donne au pivot (DC), qui tire.',a:[P('ARD','DC',0,.3),S('DC',.4,.7,-0.5)]}
   ]},
-  {n:'Passe de l’ARG',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,
-    {l:'ARD → ARG',t:'L’ARD donne à l’ARG écarté.',a:[P('ARD','ARG',0,.45)]},
-    {l:'Passe au pivot',t:'L’ARG donne au pivot (DC), qui tire.',a:[P('ARG','DC',0,.3),S('DC',.4,.7,-0.5)]}
+  {n:'Par l’ARG (tir ALG)',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,
+    {l:'ARD → ARG',t:'L’ARD donne à l’ARG écarté. Le 1 et le 2 sont légèrement aspirés vers le centre par le DC rentré en pivot.',
+     a:[P('ARD','ARG',0,.45),M('g1',-6.8,4.4,.3,.8),M('g2',-4.9,7.0,.3,.85)]},
+    {l:'ARG entre 1 et 2',t:'L’ARG court entre le 1 et le 2 et donne à l’ALG.',
+     a:[R('ARG',-7.0,6.4,0,.5,-8.6,7.6),R('ALG',-8.5,2.4,.3,.75),P('ARG','ALG',.55,.8)]},
+    {l:'Tir de l’ALG',t:'L’ALG va au tir.',a:[S('ALG',.1,.45,0.9)]}
   ]}
  ]}
 ];
