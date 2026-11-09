@@ -398,17 +398,11 @@ const PLAYS=[
 /* ===== Infériorité -1 ===== */
 {id:'inf-poisson',sec:'inf',name:'Poisson',def:'d06',
  mep:'Arrières écartés près de la ligne de touche pour étirer la défense. Rentrée du DC en 2e pivot entre le 1 et le 2, l’ailier joue autour.',
- obj:'Faire circuler jusqu’à l’ALD, puis au retour (ARG écarté au maximum, ALG à son aile) libérer la passe au pivot pour l’ARD ou l’ARG.',
+ obj:'Faire circuler jusqu’à l’ALD, puis au retour (ARG écarté au maximum, ALG à son aile) libérer la passe au pivot.',
+ note:'Sortie possible : l’ARD donne à l’ARG ; à la réception, le pivot glisse jusqu’au 7 m et aspire le 2 (qui reste à 6 m) ; l’ARG part avec ballon entre le 2 et le 1, aspire le 1 et libère la balle pour l’ALG, qui va au tir.',
  variants:[
-  {n:'Passe de l’ARD',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,INF_T4(true),
+  {n:'Principal',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,INF_T4(true),
     {l:'Passe au pivot',t:'L’ARD donne au pivot (DC), qui tire.',a:[P('ARD','DC',0,.3),S('DC',.4,.7,-0.5)]}
-  ]},
-  {n:'Par l’ARG (tir ALG)',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,INF_T4(false),
-    {l:'ARD → ARG, le pivot glisse',t:'L’ARD donne à l’ARG écarté. À la réception, le DC (pivot) glisse jusqu’au 7 m : il aspire le 2, qui reste à 6 m.',
-     a:[P('ARD','ARG',0,.45),R('DC',0.0,6.4,.35,.85,-3.6,6.6),M('g2',-3.1,6.3,.45,.9)]},
-    {l:'ARG entre 2 et 1',t:'L’ARG part avec ballon entre le 2 et le 1 : sa course aspire le 1. Il libère la balle pour l’ALG.',
-     a:[D('ARG',-6.4,6.9,0,.55,-8.4,7.6),M('g1',-7.0,5.0,.25,.7),R('ALG',-8.6,2.3,.3,.7),P('ARG','ALG',.6,.85)]},
-    {l:'Tir de l’ALG',t:'L’ALG va au tir.',a:[S('ALG',.1,.45,0.9)]}
   ]}
  ]}
 ];
