@@ -209,11 +209,11 @@ const INF_A=[
   {l:'R2 du DC – l’ARG au centre',t:'Le DC rentre en 2e pivot entre le 1 et le 2 ; en même temps, l’ARG court vers le centre du terrain. L’ALG joue autour.',bl:['ARG','DC','ARD'],
    a:[R('DC',-6.1,4.3,0,.6,-4.6,8.4),R('ARG',-2.0,10.4,.1,.65,-5.0,11.0),D('ALG',-5.2,8.4,.35,.9,-8.0,7.0),M('g1',-7.4,5.0,.4,.9)]},
   {l:'Le ballon circule jusqu’à l’ALD',t:'Le ballon circule jusqu’à l’ALD ; la défense coulisse vers la droite.',
-   a:[P('ALG','ARG',0,.22),P('ARG','ARD',.28,.52),R('ALD',9.2,3.5,.3,.6),P('ARD','ALD',.58,.8),M('d1',8.3,3.9,.55,.9),M('d2',5.3,5.3,.4,.8),M('d3',2.2,6.6,.4,.8),M('g3',-1.0,6.7,.4,.8)]},
-  {l:'Retour : l’ARD au centre',t:'L’ARD récupère le ballon de l’ALD en courant vers le centre ; l’ARG écarte au maximum et le 2 monte sur lui, l’ALG est retourné à son aile. La passe au pivot se libère.',bl:['ARD','ARG'],
-   a:[R('ARD',2.4,9.9,0,.6,6.6,10.6),P('ALD','ARD',.15,.5),R('ARG',-9.0,8.6,0,.65,-5.6,11.2),R('ALG',-9.3,1.2,.05,.65,-8.6,6.6),
-      M('g1',-8.2,3.4,.3,.8),M('g2',-7.7,9.4,.35,.85),M('d3',3.8,8.4,.4,.85),M('g3',0.8,9.1,.45,.9),R('DC',-2.4,6.3,.35,.9,-4.6,6.9)]}
+   a:[P('ALG','ARG',0,.22),P('ARG','ARD',.28,.52),R('ALD',9.2,3.5,.3,.6),P('ARD','ALD',.58,.8),M('d1',8.3,3.9,.55,.9),M('d2',5.3,5.3,.4,.8),M('d3',2.2,6.6,.4,.8),M('g3',-1.0,6.7,.4,.8)]}
 ];
+const INF_T4=(withDC)=>({l:'Retour : l’ARD au centre',t:'L’ARD récupère le ballon de l’ALD en courant vers le centre ; l’ARG écarte au maximum, l’ALG est retourné à son aile.'+(withDC?' Le pivot glisse : la passe se libère.':''),bl:['ARD','ARG'],
+   a:[R('ARD',2.4,9.9,0,.6,6.6,10.6),P('ALD','ARD',.15,.5),R('ARG',-9.0,8.6,0,.65,-5.6,11.2),R('ALG',-9.3,1.2,.05,.65,-8.6,6.6),
+      M('g1',-8.2,3.4,.3,.8),M('d3',3.8,8.4,.4,.85),M('g3',0.8,9.1,.45,.9),...(withDC?[R('DC',-2.4,6.3,.35,.9,-4.6,6.9)]:[])]});
 const SECTIONS=[['06','Sur 0-6'],['15','Sur 1-5'],['sup','Supériorité +1'],['inf','Infériorité −1']];
 const PLAYS=[
 /* ===== 0-6 ===== */
@@ -400,14 +400,14 @@ const PLAYS=[
  mep:'Arrières écartés près de la ligne de touche pour étirer la défense. Rentrée du DC en 2e pivot entre le 1 et le 2, l’ailier joue autour.',
  obj:'Faire circuler jusqu’à l’ALD, puis au retour (ARG écarté au maximum, ALG à son aile) libérer la passe au pivot pour l’ARD ou l’ARG.',
  variants:[
-  {n:'Passe de l’ARD',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,
+  {n:'Passe de l’ARD',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,INF_T4(true),
     {l:'Passe au pivot',t:'L’ARD donne au pivot (DC), qui tire.',a:[P('ARD','DC',0,.3),S('DC',.4,.7,-0.5)]}
   ]},
-  {n:'Par l’ARG (tir ALG)',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,
-    {l:'ARD → ARG',t:'L’ARD donne à l’ARG écarté. Le 1 et le 2 sont légèrement aspirés vers le centre par le DC rentré en pivot.',
-     a:[P('ARD','ARG',0,.45),M('g1',-6.8,4.4,.3,.8),M('g2',-4.9,7.0,.3,.85)]},
-    {l:'ARG entre 1 et 2',t:'L’ARG court entre le 1 et le 2 et donne à l’ALG.',
-     a:[R('ARG',-7.0,6.4,0,.5,-8.6,7.6),R('ALG',-8.5,2.4,.3,.75),P('ARG','ALG',.55,.8)]},
+  {n:'Par l’ARG (tir ALG)',init:{omit:['PVT'],ARG:[-7.7,9.4],DC:[0,11.4],ARD:[7.7,9.4],ball:'ARG'},steps:[...INF_A,INF_T4(false),
+    {l:'ARD → ARG, le pivot glisse',t:'L’ARD donne à l’ARG écarté. À la réception, le DC (pivot) glisse jusqu’au 7 m : il aspire le 2, qui reste à 6 m.',
+     a:[P('ARD','ARG',0,.45),R('DC',0.0,6.4,.35,.85,-3.6,6.6),M('g2',-3.1,6.3,.45,.9)]},
+    {l:'ARG entre 2 et 1',t:'L’ARG part avec ballon entre le 2 et le 1 : sa course aspire le 1. Il libère la balle pour l’ALG.',
+     a:[D('ARG',-6.4,6.9,0,.55,-8.4,7.6),M('g1',-7.0,5.0,.25,.7),R('ALG',-8.6,2.3,.3,.7),P('ARG','ALG',.6,.85)]},
     {l:'Tir de l’ALG',t:'L’ALG va au tir.',a:[S('ALG',.1,.45,0.9)]}
   ]}
  ]}
